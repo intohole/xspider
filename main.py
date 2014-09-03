@@ -7,6 +7,14 @@ from collections import defaultdict
 import json 
 import os
 from config import get_config
+import time
+import re
+from doc import Doc
+from vampire.utils import network  
+from vampire.htmlextract import HtmlExtract  
+from lxml import etree
+
+
 
 MAIN_CONFIG = get_config()
 
@@ -44,10 +52,6 @@ class UrlFilter(object):
 
 url_filter = UrlFilter('/home/lixuze/urls')
 
-from doc import Doc
-from vampire.utils import network  
-from vampire.htmlextract import HtmlExtract  
-from lxml import etree
 
 
 class HtmlTree(object):
@@ -73,6 +77,7 @@ class BaseSpider(object):
             if tree is not None:
                 for url in tree.xpath( url_rule):
                     urls.append(self.abs_url(url.attrib['href']))
+        urls.reverse() #网址下载下来是顺序的　但是抓取的时候是最晚的一个在最前面
         return urls
 
     def down_html(self , url , code = None):
@@ -91,15 +96,14 @@ def save_doc(doc ,  file_name ,doc_path = MAIN_CONFIG['doc_path'] ):
     if doc and isinstance(doc , Doc):
         with open('%s%s.md' % (doc_path , file_name) , 'w') as f:
             f.write(str(doc))
-            print str(doc)
 
-import time
-import re
+
 
 
 class Kr36(BaseSpider):
 
     def __init__(self):
+        self.__pattern = {}
         BaseSpider.__init__(self , 'http://www.36kr.com/')
     
 
@@ -114,12 +118,12 @@ class Kr36(BaseSpider):
         url_filter.urls[self.main_page]['fr'] = long(time.time() * 1000)
         for url in self.extract_url(main_tree.tree , url_rule = '//h1//a'):
             if not  url_filter[url]:
-                print url
                 url_filter.urls[url] = {}
                 url_filter.urls[url]['cr'] = long(time.time() * 1000)
                 html  =  self.down_html(url)
                 child_tree = HtmlTree(main_html)
-                doc = Doc(self.get_title(html) , self.extract.get_text(html) , 'li' , 'computer'  )
+
+                doc = Doc(self.get_title(html) , self.make_content(self.extract.get_text(html)) , 'li' , 'computer'  , self.get_keywords(html))
                 save_doc(doc , doc.file_name )
             else:
                 url_filter.urls[url]['fr'] = long(time.time()* 1000)
@@ -127,12 +131,29 @@ class Kr36(BaseSpider):
     def abs_url(self , url):
         return '%s%s'.strip() % (self.main_page[:-1] , url )
 
-    def get_title(self , html):
-        pattern = re.compile(' <meta name="twitter:title" content=\"(.*?)\"')
+
+
+
+    def __get_meta_info(self , html , name):
+        pattern = re.compile('<meta name="%s" content=\"(.*?)\"' % name)
         match = pattern.search(html)
         if match:
             return match.group(1)
         return None
+        
+    def get_title(self , html):
+        return self.__get_meta_info( html,'twitter:title')
+
+
+    def get_keywords(self , html):
+        return self.__get_meta_info(html , 'keywords').split(',')
+
+
+    def make_content(self , html):
+        pattern = re.compile(u'\\[(.*?)作者(.*?)\\]')
+        if html:
+            return pattern.sub( '', html.decode('utf-8') )
+
 
         
 
@@ -141,5 +162,6 @@ class Kr36(BaseSpider):
 if __name__ == '__main__':
     t = Kr36()
     t.run()
+    # print t.make_content('df阿里巴巴天气发[36氪原创文章，作者: 沈超]')
     url_filter.save()
     # url_filter.save()

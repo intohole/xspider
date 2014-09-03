@@ -59,7 +59,8 @@ class Mosquito(object):
                 content = self.__html_extract.get_text(html_string)
                 news['content'] = content
                 # news['title'] = self.__extract_title(html_string)
-                print news
+                print '\t\t\t\t%s \n %s ' % (news['title'] , news['content'])
+                raw_input() 
                 return news
             except Exception, e:
                 print e
