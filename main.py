@@ -158,8 +158,11 @@ class Kr36(BaseSpider):
 
 
 
+from utils import make_html
 if __name__ == '__main__':
     t = Kr36()
     t.run()
     url_filter.save()
+    make_html(MAIN_CONFIG['html_base'])
+
     # url_filter.save()

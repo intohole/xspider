@@ -3,4 +3,4 @@
 
 
 def get_config():
-    return {'path' : '/home/lixuze/html/'  , 'doc_path' : '/home/lixuze/github/test/content/'}
+    return {'path' : '/home/lixuze/html/'  , 'doc_path' : '/home/lixuze/github/test/content/' , 'html_base' : '/home/lixuze/github/test/'}
