@@ -30,7 +30,7 @@ class Doc(object):
         msg.append('Tags:%s  \n' % self.tags)
         if self.summary:
             msg.append('Summary:%s  \n' % self.summary)
-            msg.append('<div class="summary">  摘要: %s</div>  \n' %self.summary)
+            msg.append('<div class="msummary">&nbsp&nbsp<h3>摘要<h3>: %s</div>  \n' %self.summary)
         msg.append('  %s' % self.content)
         return ''.join(msg)
 
