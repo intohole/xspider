@@ -154,7 +154,6 @@ class Kr36(BaseSpider):
         if html:
             return pattern.sub( '', html.decode('utf-8') )
 
-
         
 
 
@@ -162,6 +161,5 @@ class Kr36(BaseSpider):
 if __name__ == '__main__':
     t = Kr36()
     t.run()
-    # print t.make_content('df阿里巴巴天气发[36氪原创文章，作者: 沈超]')
     url_filter.save()
     # url_filter.save()

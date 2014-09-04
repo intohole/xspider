@@ -9,7 +9,7 @@ import time
 class Doc(object):
 
 
-    def __init__(self , title , content , author ,  category ,tags  =  []   , head_date = None):
+    def __init__(self , title , content , author ,  category ,tags  =  []  ,summary = None , head_date = None):
         if head_date == None:
             self.head_date = time.strftime('%Y-%m-%d %H:%M:%S')
         self.title = title 
@@ -18,6 +18,7 @@ class Doc(object):
         self.tags = ' ,'.join(tags)
         self.category = category
         self.file_name = title
+        self.summary = summary 
 
 
     def __str__(self):
@@ -27,6 +28,9 @@ class Doc(object):
         msg.append('Author:%s  \n' % self.author)
         msg.append('Category:%s  \n' % self.category)
         msg.append('Tags:%s  \n' % self.tags)
+        if self.summary:
+            msg.append('Summary:%s  \n' % self.summary)
+            msg.append('<div class="summary">  摘要: %s</div>  \n' %self.summary)
         msg.append('  %s' % self.content)
         return ''.join(msg)
 
@@ -34,7 +38,7 @@ class Doc(object):
 
 
 if __name__ == '__main__':
-    doc = Doc('test' , 'cool' , 'li'  , 'jiji' ,  ['1' , '2'])
+    doc = Doc('test' , 'cool' , 'li'  , 'jiji' ,  ['1' , '2'] , '摘要')
     print doc
 
 
