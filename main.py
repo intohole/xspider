@@ -63,11 +63,13 @@ class HtmlTree(object):
 
 class BaseSpider(object):
     extract = HtmlExtract()
+    CHINESE_REG = re.compile(ur"^[\u4e00-\u9fa5]+$")
 
 
 
-    def __init__(self  , ml):
+    def __init__(self  , ml , category):
         self.main_page = ml
+        self.category = category
 
 
     def extract_url(self , tree , url_rule = 'a'):
@@ -90,6 +92,31 @@ class BaseSpider(object):
         if tree:
             return tree.xpath(title_rule)
 
+    def watch_dog(self):
+        main_html = self.down_html(self.main_page)
+        main_tree = HtmlTree(main_html)
+        if not url_filter[self.main_page]:
+            url_filter.urls[self.main_page] = {}
+            url_filter.urls[self.main_page]['cr'] = long(time.time() * 1000)
+        url_filter.urls[self.main_page]['fr'] = long(time.time() * 1000)
+
+    def run(self):
+        raise NotImplementedError ,  'spider must have run'
+
+
+    def tag_filter(self , tags):
+        filter_tag = []
+        for tag in set(tags):
+            if self.CHINESE_REG.match(tag.decode('utf-8')):
+                filter_tag.append(tag)
+        return filter_tag
+
+    def get_category(self):
+        return self.category
+
+
+    def get_content(self , tree , content_rule ):
+        return tree.xpath(content_rule)
 def save_doc(doc ,  file_name ,doc_path = MAIN_CONFIG['doc_path'] ):
     if not file_name:
         return 
@@ -104,10 +131,7 @@ class Kr36(BaseSpider):
 
     def __init__(self):
         self.__pattern = {}
-        BaseSpider.__init__(self , 'http://www.36kr.com/')
-    
-
-
+        BaseSpider.__init__(self , 'http://www.36kr.com/' , '科技前沿')
 
     def run(self ):
         main_html = self.down_html(self.main_page)
@@ -122,8 +146,7 @@ class Kr36(BaseSpider):
                 url_filter.urls[url]['cr'] = long(time.time() * 1000)
                 html  =  self.down_html(url)
                 child_tree = HtmlTree(main_html)
-
-                doc = Doc(self.get_title(html) , self.make_content(self.extract.get_text(html)) , 'li' , 'computer'  , self.get_keywords(html))
+                doc = Doc(self.get_title(html) , self.make_content(self.extract.get_text(html)) , 'li' , 'computer'  , self.tag_filter(self.get_keywords(html)))
                 save_doc(doc , doc.file_name )
             else:
                 url_filter.urls[url]['fr'] = long(time.time()* 1000)
@@ -146,15 +169,26 @@ class Kr36(BaseSpider):
 
 
     def get_keywords(self , html):
-        return self.__get_meta_info(html , 'keywords').split(',')
+        tags = self.__get_meta_info(html , 'keywords')
+        if tags :
+            return tags.split(',')
+        else:
+            return []
 
 
     def make_content(self , html):
         pattern = re.compile(u'\\[(.*?)作者(.*?)\\]')
         if html:
-            return pattern.sub( '', html.decode('utf-8') )
+            html = pattern.sub( '', html.decode('utf-8') )
+            htmls = html.split('\n')
+            return '\n'.join(htmls)
+        return '' 
 
-        
+
+class FinaceFeng(BaseSpider):
+     """docstring for FinaceFeng"""
+     def __init__(self):
+         BaseSpider.__init__('http://finance.ifeng.com/')
 
 
 
