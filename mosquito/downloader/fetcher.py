@@ -1,7 +1,7 @@
 # coding=utf-8
 
 
-class BaseFetcher(object):
+class _BaseFetcher(object):
     """基本抓取器
     get_result      得到链接网页信息
     """
