@@ -1,4 +1,6 @@
 # coding=utf-8
+from mosquito.libs.base_objects import Singleton
+from gevent import queue
 
 
 class _BaseQueue(object):
@@ -13,21 +15,20 @@ class _BaseQueue(object):
         raise NotImplementedError
 
 
-class BaseQueue(object):
-
-    from Queue import Queue
+class BaseQueue(_BaseQueue, Singleton):
 
     def __init__(self, queue_len):
-        self.queue = Queue()
+        if self._instance is None:
+            self._queue = queue.Queue(maxsize=queue_len)
 
     def get_request(self, block=True, timeout=None):
-        return self.queue.get(block=block, timeout=timeout)
+        return self._queue.get(block=block, timeout=timeout)
 
     def put_request(self, urls, block=True, timeout=None):
-        return self.queue.put(urls, block=block, timeout=timeout)
+        return self._queue.put(urls, block=block, timeout=timeout)
 
     def __len__(self):
-        return len(self.queue)
+        return self._queue.qsize()
 
 
 class _CrawledQueue(object):
@@ -59,3 +60,4 @@ class CrawledQueue(object):
 
     def __len__(self):
         return len(self.url_set)
+
