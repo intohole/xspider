@@ -1,6 +1,7 @@
 #coding=utf-8
 
 
+from grequests import request
 
 
 class _BaseFetcher(object):
@@ -16,7 +17,6 @@ class _BaseFetcher(object):
         raise NotImplementedError
 
 
-from grequests import request
 
 
 class BaseFetcher(object):
