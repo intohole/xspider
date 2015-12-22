@@ -9,7 +9,7 @@ class ZRequest(Fileds):
         self["url"] = url
         self["method"] = kw.get("method" , "GET").lower() 
         self["params"] = kw.get("params" , {})
-        
+         
          
 
 class ZResponse(Fileds):
