@@ -9,11 +9,16 @@ from ..model.models import ZResponse
 class BaseExtractor(object):
 
     
-    def __init__(self , response):
+    def __init__(self , selector_type, response):
         if isinstance(response , ZResponse):
-            self.html = response["text"] 
+            self.raw_text = response["text"] 
         elif isinstance(response , basestring):
-            self.html = response
+            self.raw_text = response
+        self.type = selector_type 
  
-    def extract(self, response , *argv , **kw):
+    def extract(self, default = None , *argv , **kw):
         raise NotImplementedError
+
+    def __str__(self):
+        return "type<{type}> {\"raw_text\":{raw_text}}".format(type = self.type , raw_text = self.raw_text)
+

@@ -7,5 +7,5 @@
 from xspider.spider.spider import BaseSpider
 
 if __name__ == "__main__":
-    spider = BaseSpider(name = "test" ,start_urls = ["http://www.126.com"])
+    spider = BaseSpider(name = "36kr" ,allow_site = ["www.36kr.com"],start_urls = ["http://www.36kr.com"])
     spider.start()
