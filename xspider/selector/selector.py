@@ -6,7 +6,7 @@ from ..model.models import ZResponse
 
 
 
-class BaseExtractor(object):
+class Selector(object):
 
     
     def __init__(self , selector_type, response):

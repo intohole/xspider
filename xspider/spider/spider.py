@@ -44,6 +44,7 @@ class BaseSpider(_BaseSpider):
     
     def _check_spider(self):
         pass
+
     
     def setStartUrls(self , urls):
         self.start_urls.extend(urls)
@@ -57,8 +58,7 @@ class BaseSpider(_BaseSpider):
             for response in self.fetcher.fetch(request):
                 page = Page(request , response) 
                 items = self.page_processor.extract(page)
-                for pieline in self.pielines:
-                    pieline.process(self.page_processor.extract(page))
+                self.process(items)
                 _links = self.extract_links(page)
                 links.update(self.url_filter(_links))
             for link in links:
@@ -76,6 +76,9 @@ class BaseSpider(_BaseSpider):
         site = links.get_url_site(pre_link)
         return [ links.join_url(site , link.get("href")) for link in page.css().findAll("a")  if link is not None ]
 
+    def process(self , page ):
+        for pieline in self.pielines:
+            pieline.process(page)
 
     def url_filter(self , urls):
         _urls = []
