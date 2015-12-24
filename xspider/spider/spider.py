@@ -33,7 +33,7 @@ class BaseSpider(_BaseSpider):
         self.start_urls = kw.get("start_urls" , []) 
         self.page_processor = kw.get("page_processor" , SimplePageProcessor()) 
         self.fetcher = kw.get("fetcher" , BaseRequestsFetcher()) 
-        self.pieline = kw.get("pieline" , ConslePieLine()) 
+        self.pielines = kw.get("pieline" , [ConslePieLine()]) 
         self.run_flag = True
         self.spid = rand2.get_random_seq(10) 
         self.url_pool = kw.get("queue" , DumpSetQueue(10000)) 
@@ -56,10 +56,13 @@ class BaseSpider(_BaseSpider):
             links = set() 
             for response in self.fetcher.fetch(request):
                 page = Page(request , response) 
-                self.pieline.process(self.page_processor.extract(page))
+                items = self.page_processor.extract(page)
+                for pieline in self.pielines:
+                    pieline.process(self.page_processor.extract(page))
                 _links = self.extract_links(page)
                 links.update(self.url_filter(_links))
-            self.logger.debug("get links {urls}".format(urls = links))
+            for link in links:
+                self.url_pool.put_request(ZRequest(link , *argv , **kw))
         self.crawl_stop()
             
             
@@ -71,7 +74,7 @@ class BaseSpider(_BaseSpider):
     def extract_links(self , page):
         pre_link = page.request["url"]
         site = links.get_url_site(pre_link)
-        return [ links.join_url(site , link["href"]) for link in page.css().findAll("a")  if link is not None ]
+        return [ links.join_url(site , link.get("href")) for link in page.css().findAll("a")  if link is not None ]
 
 
     def url_filter(self , urls):
@@ -87,4 +90,5 @@ class BaseSpider(_BaseSpider):
         return  _urls                 
 
     def crawl_stop(self):
-        self.pieline.destory(self)
+        for pieline in self.pielines:
+            pieline.destory(self)

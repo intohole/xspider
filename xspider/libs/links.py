@@ -26,10 +26,15 @@ def get_url_site(url):
 
 
 
-def join_url(site , url):
+def join_url(site , url ,protocl = "http://"):
     """站点进行补全操作
     """
     url_site = get_url_site(url)
     if url_site == "":
-        return "{site}{url}".format(site = site , url = url)
+        return "{protocl}{site}{url}".format(protocl = protocl ,site = site , url = url)
+    value , msg = _url_protocls.startswith(url)
+    if value:
+        return url
+    else:
+        return "{protocl}{url}".format(protocl = value , url = url)
     return url
