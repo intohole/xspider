@@ -13,6 +13,8 @@ from ..queue.base_queue import DumpSetQueue
 from ..libs import links
 from ..model.page import Page
 from ..filters.urlfilter import SiteFilter
+from spider_listener import DefaultSpiderListener 
+from ..selector.css_selector import CssSelector
 
 class _BaseSpider(object):
 
@@ -41,6 +43,8 @@ class BaseSpider(_BaseSpider):
         self.logger = log2.get_stream_logger(self.log_level)
         self.logger.info("init")
         self.url_filters = kw.get("url_filters" ,[SiteFilter(self.allow_site)] ) 
+        self.listeners = kw.get("listeners" , [DefaultSpiderListener()])
+        self.link_extractors = CssSelector(tag = "a" , attr = "href")
     
     def _check_spider(self):
         pass
@@ -74,7 +78,8 @@ class BaseSpider(_BaseSpider):
     def extract_links(self , page):
         pre_link = page.request["url"]
         site = links.get_url_site(pre_link)
-        return [ links.join_url(site , link.get("href")) for link in page.css().findAll("a")  if link is not None ]
+        #return [ links.join_url(site , link.get("href")) for link in page.css().findAll("a")  if link is not None ]
+        return self.link_extractors.finds(page) 
 
     def process(self , page ):
         for pieline in self.pielines:
@@ -93,5 +98,9 @@ class BaseSpider(_BaseSpider):
         return  _urls                 
 
     def crawl_stop(self):
-        for pieline in self.pielines:
-            pieline.destory(self)
+        for listener in self.listeners:
+            listener.spider_stop(self)
+   
+    def crawl_start(self):
+        for listener in self.listeners:
+            listener.spider_stop(self)

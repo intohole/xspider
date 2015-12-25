@@ -9,6 +9,8 @@ class FilePie(PieLine):
     def __init__(self ,**kw):
         super(FilePie , self).__init__()
         self.folder_path = kw.get("folder_path" , None)
+        if self.folder_path is None or isinstance(self.folder_path , basestring):
+            raise ValueError
         self.spider = kw.get("spider" , None) 
         self.work_folder = os.path.join(self.folder_path ,self.spider.spid)
         file2.mkdir_p(os.path.join(self.work_folder , "data"))

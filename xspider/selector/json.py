@@ -7,6 +7,20 @@ import json
 
 class JsonExtractor(BaseExtractor):
 
-    def __init__(self , response , *argv , **kw):
+    def __init__(self , *argv , **kw):
         super(JsonExtractor , self).__init__(response)
-        self.json = json.loads(self.raw_text) 
+        self.paths = kw.get("paths" , [])
+        if isinstance(self.paths , basestring):
+            self.paths = self.paths.split()
+        if isinstance(self.paths , (list , tuple)) is False:
+            raise ValueError
+    
+
+
+    def finds(self , page):
+        json = page.get_json()
+        for p in paths:
+            pass  
+
+    def find(self , page):
+

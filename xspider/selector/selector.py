@@ -1,22 +1,16 @@
 # coding=utf-8
 
 
-from ..model.models import ZResponse
-
 
 
 
 class Selector(object):
 
     
-    def __init__(self , selector_type, response):
-        if isinstance(response , ZResponse):
-            self.raw_text = response["text"] 
-        elif isinstance(response , basestring):
-            self.raw_text = response
-        self.type = selector_type 
+    def __init__(self ,type  ,**kw):
+        self.type = type
  
-    def extract(self, default = None , *argv , **kw):
+    def finds(self, page):
         raise NotImplementedError
 
     def __str__(self):

@@ -1,5 +1,6 @@
 # coding=utf-8
 from fileds import Fileds
+import time
 
 class ZRequest(Fileds):
 
@@ -21,3 +22,5 @@ class ZResponse(Fileds):
         self["request"] = kw.get("request" , ZRequest(url))
         self["status_code"] = kw.get( "status_code"  , -1 )
         self["text"] = kw.get("text" , "None") 
+        self["headers"] = kw.get("header" , {})
+        self["crawl_time"] = kw.get("crawl_time" , time.time())
