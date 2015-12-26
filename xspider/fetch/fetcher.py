@@ -24,18 +24,6 @@ class _BaseFetcher(object):
 
 
 
-class BaseFetcher(object):
-
-    def request(self, urls, method='get', *argv, **kw):
-        if urls:
-            if isinstance(urls, str):
-                yield request(method, urls, **kw).send()
-            elif isinstance(urls, (tuple, list)):
-                reqs = [request(method, url, **kw) for url in urls]
-                yield imap(request, stream=kw['stream'] if kw.has_key('stream') else False)
-        else:
-            raise ValueError
-
 
 
 class BaseRequestsFetcher(_BaseFetcher):
@@ -52,3 +40,12 @@ class BaseRequestsFetcher(_BaseFetcher):
         if response and response.status_code == requests.codes.ok:
             yield ZResponse(response.url , status_code =  response.status_code , text = response.text) 
     
+
+class GeventFetcher(object):
+
+    def fetch(self,request):
+        if request is None:
+            self.logger.error("download [%s] is fail" % request)    
+            yield
+        method = request.get("method" , "get") 
+        url = request.get("url" , url)

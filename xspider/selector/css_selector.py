@@ -21,3 +21,7 @@ class CssSelector(Selector):
     def finds(self ,page):
         soup = page.get_soup()
         return [ item.get(self.attr) for item in soup.findAll(self.tag) if item ] 
+
+    def find(self , page):
+        soup = page.get_soup()
+        return soup.find(self.tag).get(self.attr)

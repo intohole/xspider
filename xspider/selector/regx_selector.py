@@ -27,3 +27,10 @@ class RegxSelector(object):
                 >>> print r.finds("12a45b")
         """
         return [group for group in self.pattern.findall(page)]
+
+    def find(self , page):
+        group = self.pattern.match(page.raw_text)
+        if group:
+            return group.group()
+        return None 
+

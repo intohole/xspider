@@ -12,18 +12,23 @@ class _Filter(object):
 
 
 class SiteFilter(object):
-
+    """根据站点过滤
+        >>> sitefilter = SiteFilter()
+    """
 
     def __init__(self , sites):
         self.sites = set()    
-        if sites and isinstance(sites ,basestring):
-            self.sites.add(sites)
-        elif sites and isinstance(sites , (list , tuple, set)):
-            self.sites.update(sites)
-        else:
-            raise ValueError 
+        self._add_site(sites)
+    def _add_site(self , site):
+        if site:
+            if isinstance(site , basestring):
+                self.sites.add(site)
+            elif isinstance(site , (list , tuple , set)):
+                self.sites.update(site)   
+            elif:
+                raise ValueError
 
-    
+
     def filter(self , url):
         url_site = links.get_url_site(url) 
         if url_site in self.sites:

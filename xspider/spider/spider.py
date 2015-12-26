@@ -62,7 +62,7 @@ class BaseSpider(_BaseSpider):
             for response in self.fetcher.fetch(request):
                 page = Page(request , response) 
                 items = self.page_processor.extract(page)
-                self.process(items)
+                self.pieline(items)
                 _links = self.extract_links(page)
                 links.update(self.url_filter(_links))
             for link in links:
@@ -81,7 +81,7 @@ class BaseSpider(_BaseSpider):
         #return [ links.join_url(site , link.get("href")) for link in page.css().findAll("a")  if link is not None ]
         return self.link_extractors.finds(page) 
 
-    def process(self , page ):
+    def pieline(self , page ):
         for pieline in self.pielines:
             pieline.process(page)
 

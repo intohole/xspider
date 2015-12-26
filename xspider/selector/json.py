@@ -7,8 +7,8 @@ import json
 
 class JsonExtractor(BaseExtractor):
 
-    def __init__(self , *argv , **kw):
-        super(JsonExtractor , self).__init__(response)
+    def __init__(self ,  **kw):
+        super(JsonExtractor , self).__init__("json" , **kw)
         self.paths = kw.get("paths" , [])
         if isinstance(self.paths , basestring):
             self.paths = self.paths.split()
@@ -23,4 +23,4 @@ class JsonExtractor(BaseExtractor):
             pass  
 
     def find(self , page):
-
+        pass
