@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 
 kw = dict(
-    name='mosquito',
+    name='xspider',
     version='0.0.1',
     description='simple spider',
     author='intohole',

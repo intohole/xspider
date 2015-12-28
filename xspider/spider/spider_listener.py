@@ -27,7 +27,7 @@ class DefaultSpiderListener(object):
         if spider and isinstance(spider , spiderman.BaseSpider) and hasattr(spider , "pielines"): 
             pielines = getattr(spider , "pielines")
             for pieline in pielines:
-                pieline.destory()
+                pieline.destory(spider)
     
 
     def spider_start(self , spider):

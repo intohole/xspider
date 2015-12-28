@@ -78,8 +78,7 @@ class BaseSpider(_BaseSpider):
     def extract_links(self , page):
         pre_link = page.request["url"]
         site = links.get_url_site(pre_link)
-        #return [ links.join_url(site , link.get("href")) for link in page.css().findAll("a")  if link is not None ]
-        return self.link_extractors.finds(page) 
+        return [ links.join_url(site , url ) for url in self.link_extractors.finds(page) ]
 
     def pieline(self , page ):
         for pieline in self.pielines:
@@ -88,13 +87,15 @@ class BaseSpider(_BaseSpider):
     def url_filter(self , urls):
         _urls = []
         for url in urls:
-            is_cool = True 
+            is_skip = False 
             for urlfilter in self.url_filters:
-                if urlfilter.filter(url):
-                    is_cool = False
+                if urlfilter.filter(url) is True: #链接没有通过过滤器，返回True 
+                    is_skip = True 
                     break
-            if is_cool:
+            if is_skip is False: #链接通过所有过滤
                 _urls.append( url)
+            else:
+                self.logger.info("url:%s is skip !" % url)
         return  _urls                 
 
     def crawl_stop(self):

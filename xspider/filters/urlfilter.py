@@ -6,26 +6,30 @@ import re
 
 class _Filter(object):
 
+    def __init__(self , filter_name):
+        self.filter_name = filter_name
 
     def filter(self , url):
         raise NotImplmentError
 
 
-class SiteFilter(object):
+class SiteFilter(_Filter):
     """根据站点过滤
         >>> sitefilter = SiteFilter()
     """
 
     def __init__(self , sites):
+        super(SiteFilter , self).__init__("site_filter")
         self.sites = set()    
         self._add_site(sites)
+
     def _add_site(self , site):
         if site:
             if isinstance(site , basestring):
                 self.sites.add(site)
             elif isinstance(site , (list , tuple , set)):
                 self.sites.update(site)   
-            elif:
+            else:
                 raise ValueError
 
 
@@ -37,7 +41,7 @@ class SiteFilter(object):
 
 
 
-class UrlRegxFilter(object):
+class UrlRegxFilter(_Filter):
     """链接正则过滤类
         test:
             >>> url_filter = UrlRegxFilter("test.com/xxx[0-9]*")
@@ -45,9 +49,12 @@ class UrlRegxFilter(object):
             >>> url_filter.filter("test.com/xx4")
     """
 
-    def __init__(self , url_regx):
-        if url_regx and isinstance(url_regx , basestring):
-            self.url_pattern = re.compile(url_regx)
+    def __init__(self , url_regxs):
+        super(UrlRegxFilter , self).__init__("url_regx")
+        if url_regxs and isinstance(url_regxs, basestring):
+            self.url_patterns = [re.compile(url_regxs)]
+        elif url_regxs and isinstance(url_regxs , (list , tuple)):
+            self.url_patterns = [re.compile(url_regx) for url_regx in url_regxs]
         else:
             raise ValueError
 
@@ -58,7 +65,8 @@ class UrlRegxFilter(object):
             url = getattr(url , "url")
         elif ( url and isinstance(url , basestring)) is False:
             raise ValueError
-        group = self.url_pattern.match(url)
-        if group is None:
-            return False
-        return True
+        for pattern in self.url_patterns:
+            group = pattern.search(url)
+            if group:
+                return False        
+        return True 
