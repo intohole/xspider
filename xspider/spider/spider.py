@@ -13,8 +13,9 @@ from ..queue.base_queue import DumpSetQueue
 from ..libs import links
 from ..model.page import Page
 from ..filters.urlfilter import SiteFilter
-from spider_listener import DefaultSpiderListener 
+from spider_listener import SpiderListener 
 from ..selector.css_selector import CssSelector
+from spider_listener import DefaultSpiderListener 
 
 class _BaseSpider(object):
 
@@ -43,7 +44,8 @@ class BaseSpider(_BaseSpider):
         self.logger = log2.get_stream_logger(self.log_level)
         self.logger.info("init")
         self.url_filters = kw.get("url_filters" ,[SiteFilter(self.allow_site)] ) 
-        self.listeners = kw.get("listeners" , [DefaultSpiderListener()])
+        self.listeners = SpiderListener()
+        self.listeners.addListener(kw.get("listeners" , [DefaultSpiderListener()]))
         self.link_extractors = CssSelector(tag = "a" , attr = "href")
     
     def _check_spider(self):
@@ -100,8 +102,8 @@ class BaseSpider(_BaseSpider):
 
     def crawl_stop(self):
         for listener in self.listeners:
-            listener.spider_stop(self)
+            listener.spider_stop("spider_stop" ,self)
    
     def crawl_start(self):
         for listener in self.listeners:
-            listener.spider_stop(self)
+            listener.spider_stop("spider_start" ,self)
