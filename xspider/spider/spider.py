@@ -63,7 +63,7 @@ class BaseSpider(_BaseSpider):
             links = set() 
             for response in self.fetcher.fetch(request):
                 page = Page(request , response) 
-                items = self.page_processor.extract(page)
+                items = self.page_processor.process(page , self)
                 self.pieline(items)
                 _links = self.extract_links(page)
                 links.update(self.url_filter(_links))

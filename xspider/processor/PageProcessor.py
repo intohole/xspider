@@ -7,7 +7,7 @@ class PageProcessor(object):
 
 
 
-    def extract(self , page):
+    def process(self , page , spider):
         raise NotImplmentError
 
 
@@ -16,7 +16,7 @@ class SimplePageProcessor(object):
 
 
 
-    def extract(self , page):
+    def process(self , page ,spider):
         fileds = Fileds()
         fileds["test"] = 12
         return fileds

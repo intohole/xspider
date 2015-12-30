@@ -1,7 +1,5 @@
 #coding=utf-8
 
-
-from grequests import request
 import requests
 from b2.log2 import get_stream_logger 
 from ..model.models import ZResponse 

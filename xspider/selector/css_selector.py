@@ -2,7 +2,6 @@
 
 
 from selector import Selector 
-from lxml import etree
 try:
     from bs4 import BeautifulSoup
 except:

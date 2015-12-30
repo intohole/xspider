@@ -36,5 +36,5 @@ class Page(object):
 
     def get_tree(self):
         if self.etree is None:
-            self.etree = etree(self.raw_text) 
+            self.etree = etree.HTML(self.raw_text) 
         return self.etree

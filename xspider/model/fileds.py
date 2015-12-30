@@ -6,4 +6,4 @@ import json
 class Fileds(dict):
 
     def __str__(self):
-        return json.dumps(self)
+        return json.dumps(self , ensure_ascii = False)
