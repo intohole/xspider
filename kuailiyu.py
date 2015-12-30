@@ -18,5 +18,6 @@ class KuaiLiYu(processor.PageProcessor.PageProcessor):
     def process(self , page , spider):
         items = model.fileds.Fileds()
         items["title"] = self.title_extractor.find(page)
+        items["url"] = page.url
         return items
 

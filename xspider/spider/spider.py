@@ -8,7 +8,7 @@ from ..fetch.fetcher import BaseRequestsFetcher
 from ..model.models import ZRequest
 from ..model.page import Page
 from ..processor.PageProcessor import SimplePageProcessor
-from ..pieline.ConslePieLine import ConslePieLine
+from ..pieline.consle_pieline import ConslePieLine
 from ..queue.base_queue import DumpSetQueue 
 from ..libs import links
 from ..model.page import Page
