@@ -26,7 +26,7 @@ class SpiderListener(object):
         return False
 
     def notify(self , msg , spider):
-        for listerner in self.listerners.values():
+        for listener in self.listerners.values():
             listener.notify(msg ,spider)
 
 
@@ -55,6 +55,6 @@ class DefaultSpiderListener(Listener):
         pass
 
     def notify(self , msg , spider):
-        if hasattr(msg) and callable(getattr(self ,msg)):
+        if hasattr(self ,msg) and callable(getattr(self ,msg)):
             getattr(self , msg)(spider)
 

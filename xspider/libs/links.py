@@ -38,3 +38,10 @@ def join_url(site , url ,protocl = "http://"):
     else:
         return "{protocl}{url}".format(protocl = value , url = url)
     return url
+
+
+class TranslateLink(object):
+   
+
+    def __init__(self , rules ):
+        pass

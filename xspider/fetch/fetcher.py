@@ -34,7 +34,7 @@ class BaseRequestsFetcher(_BaseFetcher):
             self.logger.error("download [%s] is fail" % request)    
             yield  
         method = getattr(requests ,request["method"])
-        response = method(request["url"] , params = request["params"] )
+        response = method(request["url"] , params = request["params"] ,headers = request["headers"])
         if response and response.status_code == requests.codes.ok:
             yield ZResponse(response.url , status_code =  response.status_code , text = response.text) 
     

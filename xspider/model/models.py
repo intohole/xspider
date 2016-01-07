@@ -10,6 +10,7 @@ class ZRequest(Fileds):
         self["url"] = url
         self["method"] = kw.get("method" , "GET").lower() 
         self["params"] = kw.get("params" , {})
+        self["headers"] = kw.get("headers" , {'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:23.0) Gecko/20100101 Firefox/23.0'})
          
          
 

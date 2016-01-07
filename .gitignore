@@ -1,4 +1,8 @@
 *.pyc
+.*swp
+*log
+*out
+*err
 build/*
 dist/*
 *.egg-info/*

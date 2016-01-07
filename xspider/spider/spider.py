@@ -101,9 +101,7 @@ class BaseSpider(_BaseSpider):
         return  _urls                 
 
     def crawl_stop(self):
-        for listener in self.listeners:
-            listener.spider_stop("spider_stop" ,self)
+        self.listeners.notify("spider_stop" ,self)
    
     def crawl_start(self):
-        for listener in self.listeners:
-            listener.spider_stop("spider_start" ,self)
+        self.listener.notity("spider_start" ,self)

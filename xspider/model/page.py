@@ -16,6 +16,7 @@ class Page(object):
 
 
     def __init__(self ,request , response ):
+        self.url = request["url"]
         self.request = request
         self.json = None 
         self.raw_text = response["text"]
