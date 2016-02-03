@@ -87,6 +87,8 @@ class BaseSpider(_BaseSpider):
             pieline.process(page)
 
     def url_filter(self , urls):
+        if len(self.url_filters) == 0:
+            return urls
         _urls = []
         for url in urls:
             is_skip = False 
