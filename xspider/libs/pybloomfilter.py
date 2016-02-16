@@ -1,8 +1,8 @@
 #coding=utf-8
 
 import bitarray
-import hashlib 
 import math
+import cPickle
 
 
 """实现bloomfilter功能
@@ -21,20 +21,31 @@ class Bloomfilter(object):
             return 
                 k                       hash函数数目
                 m                       需要m位bitmap报错`
-            test: 
-                >>> b = Bloomfilter(1000000 , 0.09 )
-                >>> b._calc_hash_num(1000000 , 0.09) 
-            
             引用：
                 http://www.cnblogs.com/haippy/archive/2012/07/13/2590351.html
         """
         #计算需要的hash函数数目
-        k = - int( math.ceil(math.log(error_rate , math.e) / math.log(2 , math.e)))
+        k = -int( math.ceil(math.log(error_rate , math.e) / math.log(2 , math.e)))
         #在capacity , error_rate固定时，所需要的保存位数
         m = int(math.ceil(-capacity * math.log(error_rate , math.e) / math.log(2 , math.e) ** 2 ))
         return k , m 
 
     def __init__(self , capacity , error_rate ):
+        """初始化bloomfilter 
+            params:
+                capacity                最大添加到bloomfilter字符串数量
+                error_rate              允许出错比率
+            return 
+                None 
+            raise:
+                None 
+            test:
+                >>> b = Bloomfilter(10000000 , 0.001)
+                >>> b.add("hello world!")
+                >>> b+= "hello world!"
+                >>> ("hello world!" in b) == True
+                >>> ("a" in b) == False
+        """
         k , m = self._calc_hash_num(capacity , error_rate )
         self.bitmap = bitarray.bitarray(m)
         self.k = k 
@@ -71,7 +82,8 @@ class Bloomfilter(object):
     def _hash1(self , value , offset):
         """计算字符串hash值 ， java string hash code implement 
             params:
-            
+                    value               需要计算hash值的value 
+                    offset              offset实现多个hash方法
             return 
                 True
                 False 
@@ -102,8 +114,11 @@ class Bloomfilter(object):
     def __getitem__(self , value):
         return value in self
 
-if __name__ == "__main__":
-    b = Bloomfilter(10000000 , 0.01)
-    b += "hello world!"
-    print "hello world!" in b 
-    print "aa" in b 
+    def save(self, path):
+        with open(path) as f:
+            f.write(cPickle.dump(self , path))
+    
+
+    @staticmethod
+    def load(path):
+        return cPickle.loads(path)
