@@ -59,7 +59,7 @@ class UrlRegxFilter(_Filter):
             raise ValueError
 
     def filter(self , url):
-        if url and isinstance(url , dict) and "url" in dict:
+        if url and isinstance(url , dict) and "url" in url:
             url = url["url"]
         elif url and hasattr(url , "url"):
             url = getattr(url , "url")
@@ -70,3 +70,29 @@ class UrlRegxFilter(_Filter):
             if group:
                 return False        
         return True 
+
+class UrlDirPathFilter(_Filter):
+    """根据请求request属性dir_path限制抓取深度
+    """
+
+    def __init__(self , dir_path_limit = None ):
+        super(UrlDirPathFilter , self).__init__("url_dirpath_filter")
+        if dir_path_limit and isinstance(dir_path_limit , (int , long)) and dir_path_limit > 0:
+            self.dir_path_limit = dir_path_limit 
+        else:
+            raise TypeError
+
+    def filter(self , request):
+        if request is None:
+            raise ValueError 
+        if isinstance(request , dict):
+            _dir_path = request.get("dir_path" , None)
+            if _dir_path is None:
+                raise Exception , "%s is not set dirpath" % request
+            if _dir_path > self.dir_path_limit:
+                return False
+            return True 
+        raise TypeError
+
+            
+

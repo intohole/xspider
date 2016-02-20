@@ -1,7 +1,16 @@
 
 from xspider.spider.spider import BaseSpider
 from xspider.filters import urlfilter
-from kuailiyu import KuaiLiYu
+
+
+class Nlpjob(processor.PageProcessor.PageProcessor):
+
+
+    def __init__(self):
+        pass
+
+    def process(slef , page , spider):
+        pass
 
 if __name__ == "__main__":
     spider = BaseSpider(name = "nlpjob"  , page_processor = KuaiLiYu() , allow_site = ["kuailiyu.cyzone.cn"] , start_urls = ["http://kuailiyu.cyzone.cn/"])

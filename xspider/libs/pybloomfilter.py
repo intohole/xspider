@@ -115,7 +115,7 @@ class Bloomfilter(object):
         return value in self
 
     def save(self, path):
-        with open(path) as f:
+        with open(path,"w") as f:
             f.write(cPickle.dump(self , path))
     
 

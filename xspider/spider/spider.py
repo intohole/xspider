@@ -68,14 +68,14 @@ class BaseSpider(_BaseSpider):
                 _links = self.extract_links(page)
                 links.update(self.url_filter(_links))
             for link in links:
-                self.url_pool.put_request(ZRequest(link , *argv , **kw))
+                self.url_pool.put_request(ZRequest(link , request["dir_path"] , *argv , **kw))
         self.crawl_stop()
             
             
     def _make_start_request(self , *argv , **kw):
         for url in self.start_urls:
             self.logger.debug("add start url [{url}]".format(url = url))
-            self.url_pool.put_request(ZRequest(url ,*argv , **kw ))
+            self.url_pool.put_request(ZRequest(url , 0 ,*argv , **kw ))
     
     def extract_links(self , page):
         pre_link = page.request["url"]
