@@ -15,14 +15,15 @@ class Page(object):
 
 
 
-    def __init__(self ,request , response ):
-        self.url = request["url"]
-        self.request = request
-        self.json = None 
-        self.raw_text = response["text"]
-        self.soup = None 
+    def __init__(self ,request , response , dir_path ):
+        self.url = request["url"] # 抓取链接 
+        self.request = request # 抓取请求体
+        self.raw_text = response["text"] # 抓取返回体页面
+        self.json = None  # json 
+        self.soup = None # css selector 
+        self.etree = None # xpath 
         self.container = {}
-        self.etree = None
+        self.dir_path = dir_path + 1 # 标记抓取深度标志
     
 
     def get_soup(self):
