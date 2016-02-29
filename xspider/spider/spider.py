@@ -62,7 +62,7 @@ class BaseSpider(_BaseSpider):
             self.logger.info("get {req} ".format(req = request))
             links = set() 
             for response in self.fetcher.fetch(request):
-                page = Page(request , response) 
+                page = Page(request , response , request["dir_path"]) 
                 items = self.page_processor.process(page , self)
                 self.pieline(items)
                 _links = self.extract_links(page)
