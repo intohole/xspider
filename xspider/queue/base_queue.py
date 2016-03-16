@@ -31,6 +31,9 @@ class BaseQueue(_BaseQueue):
     def __len__(self):
         return self._queue.qsize()
 
+    def close(self):
+        return 
+
 class DumpSetQueue(BaseQueue):
 
 

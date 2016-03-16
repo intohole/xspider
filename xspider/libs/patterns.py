@@ -2,10 +2,12 @@
 
 import links 
 import urlparse
+import re
 
 
 
-
+_NUM_PATTERN = re.compile("^\d+$")
+_WORD_PATTERN = re.compile("^\w+$")
 
 class _Pattern(object):
 
