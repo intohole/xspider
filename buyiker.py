@@ -4,10 +4,11 @@
 
 from xspider.spider.spider import BaseSpider
 from xspider.filters import urlfilter
-from xspider import processor 
+from xspider import processor
 from xspider.selector import xpath_selector
 from xspider import model
-
+from b2 import system2
+system2.reload_utf8()
 
 class BuYiKr(processor.PageProcessor.PageProcessor):
 
@@ -24,5 +25,4 @@ class BuYiKr(processor.PageProcessor.PageProcessor):
 
 if __name__ == "__main__":
     spider = BaseSpider(name = "buyikr"  , page_processor = BuYiKr() , allow_site = ["buyiker.com"] , start_urls = ["http://buyiker.com/"])
-    #spider.url_filters.append(urlfilter.UrlRegxFilter(["kuailiyu.cyzone.cn/article/[0-9]*\.html$","kuailiyu.cyzone.cn/index_[0-9]+.html$"]))
     spider.start()

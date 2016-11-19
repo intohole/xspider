@@ -3,10 +3,9 @@
 
 
 
-from xspider import processor 
+from xspider import processor
 from xspider.selector import xpath_selector
 from xspider import model
-
 
 class KuaiLiYu(processor.PageProcessor.PageProcessor):
 

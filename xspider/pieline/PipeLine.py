@@ -6,7 +6,7 @@ import os
 
 
 
-class PieLine(object):
+class PipeLine(object):
 
 
 
