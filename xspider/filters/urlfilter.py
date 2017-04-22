@@ -3,6 +3,7 @@
 from ..libs import links
 import re
 
+__all__ = ["SiteFilter","UrlRegxFilter","UrlDirPathFilter"]
 
 class _Filter(object):
 
@@ -66,11 +67,27 @@ class UrlRegxFilter(_Filter):
         elif ( url and isinstance(url , basestring)) is False:
             raise ValueError
         for pattern in self.url_patterns:
-            group = pattern.search(url)
-            if group:
+            if pattern.search(url):
                 return False        
         return True 
-
+    
+class UrlStartFilter(_Filter):
+    """链接开始过滤类
+    """
+    
+    def __init__(self,prefix):
+        super(UrlStartFilter,self).__init__("url_start")
+        self.prefix = prefix
+    
+    def filter(self, url):
+        if url and isinstance(url , dict) and "url" in url:
+            url = url["url"]
+        elif url and hasattr(url , "url"):
+            url = getattr(url , "url")
+        elif ( url and isinstance(url , basestring)) is False:
+            raise ValueError
+        return url.startswith(self.prefix)
+ 
 class UrlDirPathFilter(_Filter):
     """根据请求request属性dir_path限制抓取深度
     """

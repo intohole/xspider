@@ -43,7 +43,12 @@ class BaseSpider(_BaseSpider):
         self.log_level = kw.get("log_level" , "DEBUG")
         self.logger = log2.get_stream_logger(self.log_level)
         self.logger.info("init")
-        self.url_filters = kw.get("url_filters" ,[SiteFilter(self.allow_site)] )
+        if self.allow_site is not None:
+            self.url_filters = [SiteFilter(self.allow_site)]
+            if "url_filters" in kw:
+                self.url_filters.extends(kw.get("url_filters")) 
+        else:
+            self.url_filters = kw.get("url_filters",[])
         self.listeners = SpiderListener()
         self.listeners.addListener(kw.get("listeners" , [DefaultSpiderListener()]))
         self.link_extractors = CssSelector(tag = "a" , attr = "href")
@@ -89,7 +94,7 @@ class BaseSpider(_BaseSpider):
     def url_filter(self , urls):
         if len(self.url_filters) == 0:
             return urls
-        _urls = []
+        urls_result = []
         for url in urls:
             is_skip = False
             for urlfilter in self.url_filters:
@@ -97,10 +102,10 @@ class BaseSpider(_BaseSpider):
                     is_skip = True
                     break
             if is_skip is False: #链接通过所有过滤
-                _urls.append( url)
+                urls_result.append(url)
             else:
                 self.logger.info("url:%s is skip !" % url)
-        return  _urls
+        return  urls_result 
 
     def crawl_stop(self):
         self.listeners.notify("spider_stop" ,self)
