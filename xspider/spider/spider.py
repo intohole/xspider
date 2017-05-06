@@ -39,10 +39,6 @@ class BaseSpider(object):
         self.listeners.addListener(kw.get("listeners" , [DefaultSpiderListener()]))
         self.link_extractors = CssSelector(tag = "a" , attr = "href")
 
-    def _check_spider(self):
-        pass
-
-
     def setStartUrls(self , urls):
         self.start_urls.extend(urls)
 
@@ -54,7 +50,6 @@ class BaseSpider(object):
             links = set()
             for response in self.fetcher.fetch(request):
                 page = Page(request , response , request["dir_path"])
-                
                 _links = self.extract_links(page)
                 links.update(self.url_filter(_links))
                 items = self.page_processor.process(page , self)

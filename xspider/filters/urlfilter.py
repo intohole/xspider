@@ -17,6 +17,16 @@ class BaseFilter(object):
     
     def __str__(self):
         return json.dumps({"filterName":self.filter_name})
+
+    def get_url(self,url):
+        if url and isinstance(url , dict) and "url" in url:
+            url = url["url"]
+        elif url and hasattr(url , "url"):
+            url = getattr(url , "url")
+        elif ( url and isinstance(url , basestring)) is False:
+            raise ValueError
+        return url
+
 class SiteFilter(BaseFilter):
     """根据站点过滤
         >>> sitefilter = SiteFilter()
