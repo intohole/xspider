@@ -2,6 +2,7 @@
 
 from ..libs import links
 import re
+import json
 
 __all__ = ["SiteFilter","UrlRegxFilter","UrlDirPathFilter"]
 
@@ -13,7 +14,9 @@ class BaseFilter(object):
     def filter(self , url):
         raise NotImplmentError
 
-
+    
+    def __str__(self):
+        return json.dumps({"filterName":self.filter_name})
 class SiteFilter(BaseFilter):
     """根据站点过滤
         >>> sitefilter = SiteFilter()
@@ -73,6 +76,9 @@ class UrlRegxFilter(BaseFilter):
     
 class UrlStartFilter(BaseFilter):
     """链接开始过滤类
+        Test:
+            >>> url_filter = UrlStartFilter("http://githuber.cn/people/")
+            >>> url_filter.filter("http://githuber.cn/people/2503423")
     """
     
     def __init__(self,prefix,lower = True):
@@ -88,6 +94,9 @@ class UrlStartFilter(BaseFilter):
         elif ( url and isinstance(url , basestring)) is False:
             raise ValueError
         return not url.lower().startswith(self.prefix) if self.lower else not url.startswith(self.prefix)
+    
+    def __str__(self):
+        return json.dumps({"filterName":self.filter_name,"pattern":self.prefix})
 
 class UrlEndFilter(BaseFilter):
     """链接开始过滤类

@@ -33,12 +33,8 @@ class BaseSpider(object):
         self.log_level = kw.get("log_level" , "warn")
         self.logger = log2.get_stream_logger(self.log_level)
         self.logger.info("init")
-        if self.allow_site is not None and len(self.allow_site) != 0:
-            self.url_filters = [SiteFilter(site) for site in self.allow_site]
-            if "url_filters" in kw:
-                self.url_filters.extend(kw.get("url_filters")) 
-        else:
-            self.url_filters = kw.get("url_filters",[])
+        self.site_filters = [SiteFilter(site) for site in self.allow_site]
+        self.url_filters = kw.get("url_filters",[])
         self.listeners = SpiderListener()
         self.listeners.addListener(kw.get("listeners" , [DefaultSpiderListener()]))
         self.link_extractors = CssSelector(tag = "a" , attr = "href")
@@ -76,9 +72,10 @@ class BaseSpider(object):
             self.url_pool.put_request(ZRequest(url , 0 ,*argv , **kw ))
 
     def extract_links(self , page):
-        pre_link = page.request["url"]
-        site = links.get_url_site(pre_link)
-        return [ links.join_url(site , url ) for url in self.link_extractors.finds(page) ]
+        parrent_link = page.request["url"]
+        parrent_site = links.get_url_site(parrent_link)
+        parrent_protocol = links.get_url_protocol(parrent_link)
+        return [ links.join_url(parrent_protocol,parrent_site , url ) for url in self.link_extractors.finds(page) if url  ]
 
     def pieline(self , page ):
         for pieline in self.pielines:
@@ -87,17 +84,21 @@ class BaseSpider(object):
     def url_filter(self , urls):
         if len(self.url_filters) == 0:
             return urls
+        site_url = []
+        if len(self.site_filters):
+            for url in urls:
+                for site_filter in  self.site_filters:
+                    if not site_filter.filter(url):
+                        site_url.append(url) 
+                        break
+        else:
+            site_url.extend(urls) 
         urls_result = []
-        for url in urls:
-            is_valuable = False
+        for url in site_url:
             for urlfilter in self.url_filters:
                 if not urlfilter.filter(url): #链接没有通过过滤器，返回True
-                    is_valuable = True
+                    urls_result.append(url)
                     break
-            if is_valuable is True: #链接通过所有过滤
-                urls_result.append(url)
-            else:
-                self.logger.info("url:%s is skip !" % url)
         return  urls_result 
 
     def crawl_stop(self):
