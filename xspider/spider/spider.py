@@ -40,7 +40,7 @@ class BaseSpider(_BaseSpider):
         self.run_flag = True
         self.spid = rand2.get_random_seq(10)
         self.url_pool = kw.get("queue" , DumpSetQueue(10000))
-        self.log_level = kw.get("log_level" , "DEBUG")
+        self.log_level = kw.get("log_level" , "warn")
         self.logger = log2.get_stream_logger(self.log_level)
         self.logger.info("init")
         if self.allow_site is not None:
@@ -68,10 +68,13 @@ class BaseSpider(_BaseSpider):
             links = set()
             for response in self.fetcher.fetch(request):
                 page = Page(request , response , request["dir_path"])
-                items = self.page_processor.process(page , self)
-                self.pieline(items)
+                
                 _links = self.extract_links(page)
                 links.update(self.url_filter(_links))
+                items = self.page_processor.process(page , self)
+                if items is None:
+                    continue
+                self.pieline(items)
             for link in links:
                 self.url_pool.put_request(ZRequest(link , request["dir_path"] , *argv , **kw))
         self.crawl_stop()
