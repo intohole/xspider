@@ -17,17 +17,7 @@ from spider_listener import SpiderListener
 from ..selector.css_selector import CssSelector
 from spider_listener import DefaultSpiderListener
 
-class _BaseSpider(object):
-
-    def __init__(self, start_urls):
-        self.start_urls = [start_urls] if isinstance(
-            start_urls, (basestring)) else start_urls
-
-    def run(self, *argv, **kw):
-        raise NotImplementedError
-
-
-class BaseSpider(_BaseSpider):
+class BaseSpider(object):
 
 
     def __init__(self , name, *argv , **kw):
@@ -43,10 +33,10 @@ class BaseSpider(_BaseSpider):
         self.log_level = kw.get("log_level" , "warn")
         self.logger = log2.get_stream_logger(self.log_level)
         self.logger.info("init")
-        if self.allow_site is not None:
-            self.url_filters = [SiteFilter(self.allow_site)]
+        if self.allow_site is not None and len(self.allow_site) != 0:
+            self.url_filters = [SiteFilter(site) for site in self.allow_site]
             if "url_filters" in kw:
-                self.url_filters.extends(kw.get("url_filters")) 
+                self.url_filters.extend(kw.get("url_filters")) 
         else:
             self.url_filters = kw.get("url_filters",[])
         self.listeners = SpiderListener()
@@ -99,12 +89,12 @@ class BaseSpider(_BaseSpider):
             return urls
         urls_result = []
         for url in urls:
-            is_skip = False
+            is_valuable = False
             for urlfilter in self.url_filters:
-                if urlfilter.filter(url) is True: #链接没有通过过滤器，返回True
-                    is_skip = True
+                if not urlfilter.filter(url): #链接没有通过过滤器，返回True
+                    is_valuable = True
                     break
-            if is_skip is False: #链接通过所有过滤
+            if is_valuable is True: #链接通过所有过滤
                 urls_result.append(url)
             else:
                 self.logger.info("url:%s is skip !" % url)

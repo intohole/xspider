@@ -5,7 +5,7 @@ import re
 
 __all__ = ["SiteFilter","UrlRegxFilter","UrlDirPathFilter"]
 
-class _Filter(object):
+class BaseFilter(object):
 
     def __init__(self , filter_name):
         self.filter_name = filter_name
@@ -14,7 +14,7 @@ class _Filter(object):
         raise NotImplmentError
 
 
-class SiteFilter(_Filter):
+class SiteFilter(BaseFilter):
     """根据站点过滤
         >>> sitefilter = SiteFilter()
     """
@@ -42,7 +42,7 @@ class SiteFilter(_Filter):
 
 
 
-class UrlRegxFilter(_Filter):
+class UrlRegxFilter(BaseFilter):
     """链接正则过滤类
         test:
             >>> url_filter = UrlRegxFilter("test.com/xxx[0-9]*")
@@ -71,13 +71,14 @@ class UrlRegxFilter(_Filter):
                 return False        
         return True 
     
-class UrlStartFilter(_Filter):
+class UrlStartFilter(BaseFilter):
     """链接开始过滤类
     """
     
-    def __init__(self,prefix):
+    def __init__(self,prefix,lower = True):
         super(UrlStartFilter,self).__init__("url_start")
-        self.prefix = prefix
+        self.lower = lower
+        self.prefix = prefix.lower() if self.lower else prefix
     
     def filter(self, url):
         if url and isinstance(url , dict) and "url" in url:
@@ -86,9 +87,30 @@ class UrlStartFilter(_Filter):
             url = getattr(url , "url")
         elif ( url and isinstance(url , basestring)) is False:
             raise ValueError
-        return url.startswith(self.prefix)
- 
-class UrlDirPathFilter(_Filter):
+        return not url.lower().startswith(self.prefix) if self.lower else not url.startswith(self.prefix)
+
+class UrlEndFilter(BaseFilter):
+    """链接开始过滤类
+    """
+    
+    def __init__(self, suffix,lower = True):
+        super(UrlEndFilter,self).__init__("url_end")
+        self.lower = lower
+        self.suffix = suffix.lower() if self.lower else suffix
+        self.suffix = suffix
+    
+    def filter(self, url):
+        if url and isinstance(url , dict) and "url" in url:
+            url = url["url"]
+        elif url and hasattr(url , "url"):
+            url = getattr(url , "url")
+        elif ( url and isinstance(url , basestring)) is False:
+            raise ValueError
+        return not url.lower().endswith(self.suffix) if self.lower else not url.endswith(self.suffix)
+
+
+
+class UrlDirPathFilter(BaseFilter):
     """根据请求request属性dir_path限制抓取深度
     """
 
