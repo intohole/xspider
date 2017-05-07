@@ -8,7 +8,7 @@ from ..fetch.fetcher import BaseRequestsFetcher
 from ..model.models import ZRequest
 from ..model.page import Page
 from ..processor.PageProcessor import SimplePageProcessor
-from ..pieline.ConsolePipeLine import ConsolePipeLine
+from ..pipeline.ConsolePipeLine import ConsolePipeLine
 from ..queue.base_queue import DumpSetQueue
 from ..libs import links
 from ..model.page import Page
@@ -26,7 +26,7 @@ class BaseSpider(object):
         self.start_urls = kw.get("start_urls" , [])
         self.page_processor = kw.get("page_processor" , SimplePageProcessor())
         self.fetcher = kw.get("fetcher" , BaseRequestsFetcher())
-        self.pielines = kw.get("pieline" , [ConsolePipeLine()])
+        self.pipelines = kw.get("pipeline" , [ConsolePipeLine()])
         self.run_flag = True
         self.spid = rand2.get_random_seq(10)
         self.url_pool = kw.get("queue" , DumpSetQueue(10000))
@@ -55,7 +55,7 @@ class BaseSpider(object):
                 items = self.page_processor.process(page , self)
                 if items is None:
                     continue
-                self.pieline(items)
+                self.pipeline(items)
             for link in links:
                 self.url_pool.put_request(ZRequest(link , request["dir_path"] , *argv , **kw))
         self.crawl_stop()
@@ -72,9 +72,9 @@ class BaseSpider(object):
         parrent_protocol = links.get_url_protocol(parrent_link)
         return [ links.join_url(parrent_protocol,parrent_site , url ) for url in self.link_extractors.finds(page) if url  ]
 
-    def pieline(self , page ):
-        for pieline in self.pielines:
-            pieline.process(page)
+    def pipeline(self , page ):
+        for pipeline in self.pipelines:
+            pipeline.process(page)
 
     def url_filter(self , urls):
         if len(self.url_filters) == 0:
