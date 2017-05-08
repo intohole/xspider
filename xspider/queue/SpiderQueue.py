@@ -5,43 +5,51 @@ from b2.object2 import Singleton
 from ..model.models import ZRequest 
 
 
-class _BaseQueue(object):
+class BaseQueue(object):
 
     def __init__(self, queue_len):
         pass
 
-    def get_request(self, *argv, **kw):
+    def pop(self, *argv, **kw):
         raise NotImplementedError
 
-    def put_request(self, urls):
+    def push(self, urls):
+        raise NotImplementedError
+    
+    def empty(self):
+        raise NotImplementedError
+    
+    def colse(self):
         raise NotImplementedError
 
-
-class BaseQueue(_BaseQueue):
+class SpiderQueue(SpiderBaseQueue):
 
     def __init__(self, queue_len):
         self._queue = queue.Queue(maxsize=queue_len)
 
-    def get_request(self, block=True, timeout=None):
+    def pop(self, block=True, timeout=None):
         return self._queue.get(block=block, timeout=timeout)
 
-    def put_request(self, urls, block=True, timeout=None):
+    def push(self, urls, block=True, timeout=None):
         return self._queue.put(urls, block=block, timeout=timeout)
 
     def __len__(self):
         return self._queue.qsize()
+    
+    def empty(self):
+        return len(self) == 0
 
     def close(self):
         return 
 
-class DumpSetQueue(BaseQueue):
+class DumpSetQueue(SpiderQueue):
 
 
     def __init__(self , maxsize  = 0, *argv , **kw):
         super(DumpSetQueue , self).__init__(maxsize)
         self.crawled = set()
     
-    def put_request(self , request, block = True , timeout = None):
+    def push(self , request, block = True , timeout = None):
         url = request["url"] if isinstance(request , ZRequest) else request
         if url in self.crawled:
             return False

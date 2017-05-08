@@ -9,7 +9,7 @@ from ..model.models import ZRequest
 from ..model.page import Page
 from ..processor.PageProcessor import SimplePageProcessor
 from ..pipeline.ConsolePipeLine import ConsolePipeLine
-from ..queue.base_queue import DumpSetQueue
+from ..queue.SpiderQueue import DumpSetQueue
 from ..libs import links
 from ..model.page import Page
 from ..filters.urlfilter import SiteFilter
@@ -45,7 +45,7 @@ class BaseSpider(object):
     def start(self, *argv , **kw):
         self._make_start_request(*argv , **kw)
         while self.url_pool.empty() is False and self.run_flag:
-            request = self.url_pool.get_request()
+            request = self.url_pool.pop()
             self.logger.info("get {req} ".format(req = request))
             links = set()
             for response in self.fetcher.fetch(request):
@@ -57,7 +57,7 @@ class BaseSpider(object):
                     continue
                 self.pipeline(items)
             for link in links:
-                self.url_pool.put_request(ZRequest(link , request["dir_path"] , *argv , **kw))
+                self.url_pool.push(ZRequest(link , request["dir_path"] , *argv , **kw))
         self.crawl_stop()
 
 

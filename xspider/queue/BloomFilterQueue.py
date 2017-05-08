@@ -2,9 +2,9 @@
 
 
 from pybloomfilter import BloomFilter
-from base_queue import BaseQueue 
+from Spider import SpiderBaseQueue 
 
-class BloomFilterQueue(BaseQueue):
+class BloomFilterQueue(SpiderQueue):
 
 
 
@@ -12,7 +12,7 @@ class BloomFilterQueue(BaseQueue):
         super(BloomFilterQueue , self).__init__(maxsize)
         self.crawled = BloomFilter(capacity  , wrong_rate , bloomfilter_path)
 
-    def put_request(self , request , block = True , timeout = None ):
+    def push(self , request , block = True , timeout = None ):
         url = request["url"] if isinstance(request ,ZRequest ) else request
         if url in self.crawled:
             return False
