@@ -38,6 +38,7 @@ class BaseSpider(object):
         self.listeners = SpiderListener()
         self.listeners.addListener(kw.get("listeners" , [DefaultSpiderListener()]))
         self.link_extractors = CssSelector(tag = "a" , attr = "href")
+        self.crawled_filter = kw.get("crawled_filter", None) 
 
     def setStartUrls(self , urls):
         self.start_urls.extend(urls)
@@ -64,7 +65,7 @@ class BaseSpider(object):
     def _make_start_request(self , *argv , **kw):
         for url in self.start_urls:
             self.logger.debug("add start url [{url}]".format(url = url))
-            self.url_pool.put_request(ZRequest(url , 0 ,*argv , **kw ))
+            self.url_pool.push(ZRequest(url , 0 ,*argv , **kw ))
 
     def extract_links(self , page):
         parrent_link = page.request["url"]
@@ -94,6 +95,12 @@ class BaseSpider(object):
                 if not urlfilter.filter(url): #链接没有通过过滤器，返回True
                     urls_result.append(url)
                     break
+        if self.crawled_filter:
+            result = []
+            for url in urls_result:
+                if not self.crawled_filter.filter(url):# 链接不在已抓队列中
+                    result.append(url)                    
+            return result
         return  urls_result 
 
     def crawl_stop(self):

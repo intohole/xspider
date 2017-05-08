@@ -3,8 +3,7 @@
 
 from base_queue import BaseQueue
 from b2.queue2 import FifoDiskQueue 
-from ..model.models import ZRquest
-
+from ..model.models import ZRequest
 
 
 class SpiderFifoDiskQueue(BaseQueue):
@@ -13,13 +12,14 @@ class SpiderFifoDiskQueue(BaseQueue):
     
     
     def __init__(self,save_folder,chunk_size):
+        super(SpiderFifoDiskQueue,self).__init__(chunk_size)
         self.chunk_size = chunk_size
         self.save_folder = save_folder
         self.queue = FifoDiskQueue(save_folder,chunk_size)
 
     
     def pop(self,*argv,**kw):
-        return ZRquest.loads(self.queue.pop())
+        return ZRequest.loads(self.queue.pop())
         
     
     def push(self,request):
@@ -27,6 +27,9 @@ class SpiderFifoDiskQueue(BaseQueue):
     
     def __len__(self):
         return len(self.queue)
+
+    def empty(self):
+        return len(self) == 0
     
     def close(self):
         self.queue.close()

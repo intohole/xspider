@@ -22,7 +22,7 @@ class BaseQueue(object):
     def colse(self):
         raise NotImplementedError
 
-class SpiderQueue(SpiderBaseQueue):
+class SpiderQueue(BaseQueue):
 
     def __init__(self, queue_len):
         self._queue = queue.Queue(maxsize=queue_len)
