@@ -64,8 +64,33 @@ def join_url(parrent_protocol,parrent_site  , url):
     return url
 
 
-class TranslateLink(object):
-   
 
-    def __init__(self , rules ):
-        pass
+def parse(url):
+    """解析链接
+        param:link:basestring:链接
+        return:protocol:basestring:链接协议头
+        return:site:basestring:链接站点
+        return:path:basestring:链接主体
+        return:params:dict:链接参数
+        Test:
+            >>> parse("https://buyiker.com/test.html?page=1")
+            ('https://', 'buyiker.com', '/test.html', {'page': '1'})
+            >>> parse("buyiker.com/test.html")
+            (None, 'buyiker.com', '/test.html', {})
+            >>> parse("buyiker.com")
+            (None, 'buyiker.com', '', {})
+    """
+    protocol = get_url_protocol(url)
+    site = get_url_site(url)
+    param_index = url.find("?")
+    param_index = param_index if param_index != -1 else len(url)
+    path_index = (len(protocol) if protocol else 0 ) + (len(site) if site else 0)
+    path = url[path_index:param_index]
+    param_dict = {}
+    param_value = None 
+    if param_index < len(url):
+        param_value = url[param_index + 1:]
+        for param in param_value.split("&"):
+            key,value = param.split("=") 
+            param_dict[key] = value
+    return protocol,site,path,param_dict
