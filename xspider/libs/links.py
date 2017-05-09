@@ -1,11 +1,11 @@
 #coding=utf-8
 from b2.stop2 import StopWords
-
+import urllib
 __ALL__ = [ "get_url_site"]
 
 _url_protocols = StopWords(words = ["http://" , "https://" , "ftp://"] ) 
 
-
+__all__ = ["get_url_protocol" ,"get_url_site","get_default","parse","urljoin"]
 def get_url_protocol(url):
     """得到链接的http协议
         param:url:basestring:链接
@@ -94,3 +94,28 @@ def parse(url):
             key,value = param.split("=") 
             param_dict[key] = value
     return protocol,site,path,param_dict
+
+def get_default(value , default_value):
+    if value is None:
+        return default_value
+    return value
+
+def urljoin(protocol,site,path,param_dict):
+    """组合解析出来的链接
+        param:protocol:bastring:链接协议头
+        param:site:basestring:链接站点
+        param:path:bastring:链接路径
+        param:param_dict:dict:链接参数
+        return:url:bastring:组合后的链接
+        Test:
+            >>> urljoin(*parse("https://buyiker.com/test.html?page=1"))
+            'https://buyiker.com/test.html?page=1'
+    """
+    param_value = None
+    if param_dict and len(param_dict) > 0:
+        param_value = "?%s" % urllib.urlencode(param_dict)
+    return "{protocol}{site}{path}{param_value}".format(
+                protocol = get_default(protocol,""),
+                site = get_default(site,""),
+                path = get_default(path,""),
+                param_value = get_default(param_value,""))
