@@ -7,37 +7,40 @@ from b2 import rand2
 from ..fetch.fetcher import BaseRequestsFetcher
 from ..model.models import ZRequest
 from ..model.page import Page
-from ..processor.PageProcessor import SimplePageProcessor
 from ..pipeline.ConsolePipeLine import ConsolePipeLine
 from ..queue.SpiderQueue import DumpSetQueue
 from ..libs import links
 from ..model.page import Page
 from ..filters.urlfilter import SiteFilter
 from spider_listener import SpiderListener
-from ..selector.css_selector import CssSelector
+from ..selector.CssSelector import CssSelector
 from spider_listener import DefaultSpiderListener
 
 class BaseSpider(object):
 
 
     def __init__(self , name, *argv , **kw):
+        self.log_level = kw.get("log_level" , "warn")
+        self.logger = log2.get_stream_logger(self.log_level)
         self.name = name
         self.allow_site = kw.get("allow_site" , [])
+        self.logger.warn("spider {} init , allow_site {}".format(name,self.allow_site))
         self.start_urls = kw.get("start_urls" , [])
-        self.page_processor = kw.get("page_processor" , SimplePageProcessor())
+        self.page_processor = kw.get("page_processor")
+        if self.page_processor is None:
+            raise ValueError("page processor not set ! can't run ")
         self.fetcher = kw.get("fetcher" , BaseRequestsFetcher())
         self.pipelines = kw.get("pipeline" , [ConsolePipeLine()])
         self.run_flag = True
         self.spid = rand2.get_random_seq(10)
         self.url_pool = kw.get("queue" , DumpSetQueue(10000))
-        self.log_level = kw.get("log_level" , "warn")
-        self.logger = log2.get_stream_logger(self.log_level)
         self.logger.info("init")
+        self.before_crawl = kw.get("before_crawl",[]) # before crawl do something
         self.site_filters = [SiteFilter(site) for site in self.allow_site]
         self.url_filters = kw.get("url_filters",[])
         self.listeners = SpiderListener()
         self.listeners.addListener(kw.get("listeners" , [DefaultSpiderListener()]))
-        self.link_extractors = CssSelector(tag = "a" , attr = "href")
+        self.link_extractors = CssSelector("a[href]")
         self.crawled_filter = kw.get("crawled_filter", None) 
 
     def setStartUrls(self , urls):
@@ -45,6 +48,7 @@ class BaseSpider(object):
 
     def start(self, *argv , **kw):
         self._make_start_request(*argv , **kw)
+        self.logger.warn("spider {} get start request".format(self.name))
         while self.url_pool.empty() is False and self.run_flag:
             request = self.url_pool.pop()
             self.logger.info("get {req} ".format(req = request))
@@ -53,10 +57,10 @@ class BaseSpider(object):
                 page = Page(request , response , request["dir_path"])
                 _links = self.extract_links(page)
                 links.update(self.url_filter(_links))
-                items = self.page_processor.process(page , self)
-                if items is None:
-                    continue
-                self.pipeline(items)
+                self.logger.warn("extract link {}".format(links))
+                if self.page_processor.match(page):
+                    items = self.page_processor.process(page,self)
+                    self.pipeline(items) if items else 0 
             for link in links:
                 self.url_pool.push(ZRequest(link , request["dir_path"] , *argv , **kw))
         self.crawl_stop()
@@ -71,7 +75,9 @@ class BaseSpider(object):
         parrent_link = page.request["url"]
         parrent_site = links.get_url_site(parrent_link)
         parrent_protocol = links.get_url_protocol(parrent_link)
-        return [ links.join_url(parrent_protocol,parrent_site , url ) for url in self.link_extractors.finds(page) if url  ]
+        self.logger.debug("parrent_link {} parrent_site {} parrent_protocol {} ".format(parrent_link,parrent_site,parrent_protocol))
+        self.logger.debug("links_extractors {}".format(self.link_extractors.select(page)))
+        return [ links.join_url(parrent_protocol,parrent_site , url["href"] ) for url in self.link_extractors.select(page) if url  ]
 
     def pipeline(self , page ):
         for pipeline in self.pipelines:

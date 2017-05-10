@@ -14,7 +14,8 @@ def get_url_protocol(url):
         Test:
             >>> get_url_protocol("https://wwww.baidu.com/")
             'https://'
-            >>> get_url_protocol("www.baidu.com")
+            >>> get_url_protocol("https://githuber.cn/search?location=china")
+            'https://' 
     """
     value , msg = _url_protocols.startswith(url.lower())
     return msg if value else None
