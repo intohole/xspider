@@ -52,7 +52,7 @@ class DefaultSpiderListener(Listener):
                     pieline.destory(spider)
             if hasattr(spider , "url_pool"):
                 url_pool = getattr(spider , "url_pool")
-                if url_pool and hasattr(url_pool , "close()"):
+                if url_pool and hasattr(url_pool , "close"):
                     url_pool.close()
             
     
