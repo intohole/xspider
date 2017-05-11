@@ -1,14 +1,13 @@
 # coding=utf-8
 
-from gevent import queue
 from b2.object2 import Singleton
 from ..model.models import ZRequest 
-
+import Queue
 
 class BaseQueue(object):
 
     def __init__(self, queue_len):
-        pass
+        self._queue_len = queue_len 
 
     def pop(self, *argv, **kw):
         raise NotImplementedError
@@ -17,45 +16,53 @@ class BaseQueue(object):
         raise NotImplementedError
     
     def empty(self):
-        raise NotImplementedError
+        return len(self) == 0
     
     def colse(self):
-        raise NotImplementedError
+        return  
 
-class SpiderQueue(BaseQueue):
+    def full(self):
+        if self._queue_len is None:
+            return False
+        return len(self) >= self._queue_len
+
+class MemoryLifoQueue(BaseQueue):
 
     def __init__(self, queue_len):
-        self._queue = queue.Queue(maxsize=queue_len)
+        super(MemoryLIFOQueue,self).__init__(queue_len)
+        self._queue = Queue.LifoQueue() if queue_len is None else Queue.LifoQueue(queue) 
 
-    def pop(self, block=True, timeout=None):
-        return self._queue.get(block=block, timeout=timeout)
+    def pop(self,*argv,**kw):
+        block = kw.get("block",True) 
+        timeout = kw.get("timeout",None)
+        return self._queue.get(block = block ,timeout = timeout) 
 
-    def push(self, urls, block=True, timeout=None):
+    def push(self, request,**kw):
+        block = kw.get("block",True) 
+        timeout = kw.get("timeout",None)
         return self._queue.put(urls, block=block, timeout=timeout)
 
     def __len__(self):
         return self._queue.qsize()
     
-    def empty(self):
-        return len(self) == 0
 
-    def close(self):
-        return 
-
-class DumpSetQueue(SpiderQueue):
+class MemoryFifoQueue(BaseQueue):
 
 
-    def __init__(self , maxsize  = 0, *argv , **kw):
-        super(DumpSetQueue , self).__init__(maxsize)
-        self.crawled = set()
+
+    def __init__(self,queue_len):
+        super(MemoryFifoQueue,self).__init__(queue_len)
+        self._queue = Queue.Queue() if queue_len else Queue.Queue(queue_len) 
     
-    def push(self , request, block = True , timeout = None):
-        url = request["url"] if isinstance(request , ZRequest) else request
-        if url in self.crawled:
-            return False
-        self.crawled.add(url)
-        self._queue.put(request, block = block , timeout = timeout )
-        return True
+    def pop(self,*argv,**kw):
+        block = kw.get("block",True) 
+        timeout = kw.get("timeout",None)
+        return self._queue.get(block = block ,timeout = timeout) 
 
-    def empty(self):
-        return self._queue.empty()
+    def push(self, request,**kw):
+        block = kw.get("block",True) 
+        timeout = kw.get("timeout",None)
+        return self._queue.put(urls, block=block, timeout=timeout)
+
+    def __len__(self):
+        return self._queue.qsize()
