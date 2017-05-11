@@ -46,3 +46,10 @@ xspider
         		return items
 
 			
+
+
+
+抓取部分有以下工程代码
+==========
++ [PhantomjsFetcher](https://github.com/2shou/PhantomjsFetcher)
++ [pyspider](https://github.com/binux/pyspider)
