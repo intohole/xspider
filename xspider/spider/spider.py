@@ -24,7 +24,7 @@ class BaseSpider(object):
         self.logger = log2.get_stream_logger(self.log_level)
         self.name = name
         self.allow_site = kw.get("allow_site" , [])
-        self.logger.warn("spider {} init , allow_site {}".format(name,self.allow_site))
+        self.logger.info("spider {} init , allow_site {}".format(name,self.allow_site))
         self.start_urls = kw.get("start_urls" , [])
         self.page_processor = kw.get("page_processor")
         if self.page_processor is None:
@@ -48,7 +48,7 @@ class BaseSpider(object):
 
     def start(self, *argv , **kw):
         self._make_start_request(*argv , **kw)
-        self.logger.warn("spider {} get start request".format(self.name))
+        self.logger.info("spider {} get start request".format(self.name))
         while self.url_pool.empty() is False and self.run_flag:
             request = self.url_pool.pop()
             self.logger.info("get {req} ".format(req = request))
@@ -57,7 +57,7 @@ class BaseSpider(object):
                 page = Page(request , response , request["dir_path"])
                 _links = self.extract_links(page)
                 links.update(self.url_filter(_links))
-                self.logger.warn("extract link {}".format(links))
+                self.logger.debug("extract link {}".format(links))
                 if self.page_processor.match(page):
                     items = self.page_processor.process(page,self)
                     self.pipeline(items) if items else 0 
@@ -76,7 +76,6 @@ class BaseSpider(object):
         parrent_site = links.get_url_site(parrent_link)
         parrent_protocol = links.get_url_protocol(parrent_link)
         self.logger.debug("parrent_link {} parrent_site {} parrent_protocol {} ".format(parrent_link,parrent_site,parrent_protocol))
-        self.logger.debug("links_extractors {}".format(self.link_extractors.select(page)))
         return [ links.join_url(parrent_protocol,parrent_site , url["href"] ) for url in self.link_extractors.select(page) if url  ]
 
     def pipeline(self , page ):
