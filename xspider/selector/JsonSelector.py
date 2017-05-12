@@ -1,7 +1,6 @@
 #coding=utf-8
 
-
-from extractor import BaseExtractor
+from selector import BaseSelector
 from b2.json2 import json2
 import json
 

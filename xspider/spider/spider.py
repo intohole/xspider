@@ -47,6 +47,7 @@ class BaseSpider(object):
         self.start_urls.extend(urls)
 
     def start(self, *argv , **kw):
+        self.crawl_start()
         self._make_start_request(*argv , **kw)
         self.logger.info("spider {} get start request".format(self.name))
         while self.url_pool.empty() is False and self.run_flag:

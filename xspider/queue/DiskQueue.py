@@ -7,12 +7,20 @@ from b2.queue2 import LifoDiskQueue
 from ..model.models import ZRequest
 
 
+
+__all__ = ["SpiderFifoDiskQueue","SpiderLifoDiskQueue"]
+
 class SpiderFifoDiskQueue(BaseQueue):
     """基于文件队列，不保证线程安全
     """ 
     
     
-    def __init__(self,save_folder,chunk_size,queue_len = None):
+    def __init__(self,save_folder,chunk_size = 100000,queue_len = None):
+        """初始化文件Fifo队列
+            param:save_folder:basestring:保存的文件夹
+            param:chunk_size:int:文件队列每个文件保存的条数
+            param:queue_len:int:队列最大存储数量,默认无限制
+        """
         super(SpiderFifoDiskQueue,self).__init__(queue_len)
         self.chunk_size = chunk_size
         self.save_folder = save_folder
@@ -42,6 +50,10 @@ class SpiderLifoDiskQueue(BaseQueue):
     """
 
     def __init__(self,queue_file,queue_len = None):
+        """文件后入先出队列
+            param:queue_file:队列文件
+            param:queue_len:文件最大存储队列
+        """
         super(SpiderLifoDiskQueue,self).__init__(queue_len) 
         self._queue = LifoDiskQueue(queue_file)
     
