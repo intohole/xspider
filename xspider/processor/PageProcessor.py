@@ -17,7 +17,9 @@ class PageProcessor(object):
     def match(self,page):
         return True
 
-
+    def excute(self,page,spider):
+        if self.match(page):
+            self.process(page,spider)
 
 
 

@@ -59,9 +59,8 @@ class BaseSpider(object):
                 _links = self.extract_links(page)
                 links.update(self.url_filter(_links))
                 self.logger.debug("extract link {}".format(links))
-                if self.page_processor.match(page):
-                    items = self.page_processor.process(page,self)
-                    self.pipeline(items) if items else 0 
+                items = self.page_processor.excute(page,self)
+                self.pipeline(items) if items else 0 
             for link in links:
                 self.url_pool.push(ZRequest(link , request["dir_path"] , *argv , **kw))
         self.crawl_stop()
