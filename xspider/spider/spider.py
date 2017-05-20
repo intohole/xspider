@@ -4,17 +4,18 @@
 
 from b2 import log2
 from b2 import rand2
+from b2 import str2
 from ..fetch.fetcher import BaseRequestsFetcher
 from ..model.models import ZRequest
 from ..model.page import Page
 from ..pipeline.ConsolePipeLine import ConsolePipeLine
-from ..queue.SpiderQueue import DumpSetQueue
+from ..queue.SpiderQueue import MemoryFifoQueue 
 from ..libs import links
 from ..model.page import Page
 from ..filters.urlfilter import SiteFilter
-from spider_listener import SpiderListener
 from ..selector.CssSelector import CssSelector
-from spider_listener import DefaultSpiderListener
+from spiderlistener import DefaultSpiderListener
+from spiderlistener import SpiderListener
 
 class BaseSpider(object):
 
@@ -33,7 +34,7 @@ class BaseSpider(object):
         self.pipelines = kw.get("pipeline" , [ConsolePipeLine()])
         self.run_flag = True
         self.spid = rand2.get_random_seq(10)
-        self.url_pool = kw.get("queue" , DumpSetQueue(10000))
+        self.url_pool = kw.get("queue" , MemoryFifoQueue(10000))
         self.logger.info("init")
         self.before_crawl = kw.get("before_crawl",[]) # before crawl do something
         self.site_filters = [SiteFilter(site) for site in self.allow_site]
@@ -76,7 +77,7 @@ class BaseSpider(object):
         parrent_site = links.get_url_site(parrent_link)
         parrent_protocol = links.get_url_protocol(parrent_link)
         self.logger.debug("parrent_link {} parrent_site {} parrent_protocol {} ".format(parrent_link,parrent_site,parrent_protocol))
-        return [ links.join_url(parrent_protocol,parrent_site , url["href"] ) for url in self.link_extractors.select(page) if url  ]
+        return [ links.join_url(parrent_protocol,parrent_site , url["href"] ) for url in self.link_extractors.select(page) if not str2.isBlank(url["href"])  ]
 
     def pipeline(self , page ):
         for pipeline in self.pipelines:
@@ -112,4 +113,4 @@ class BaseSpider(object):
         self.listeners.notify("spider_stop" ,self)
 
     def crawl_start(self):
-        self.listener.notity("spider_start" ,self)
+        self.listeners.notify("spider_start" ,self)

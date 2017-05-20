@@ -8,8 +8,8 @@ __all__ = ["PageProcessor","PageMatchStartUrlProcessor"]
 class PageProcessor(object):
     """parse page or extract web fileds or do somthing 
     """
-    def __init__(self,name):
-        self.name = name 
+    def __init__(self,name = None):
+        self.name = name if name else type(self).__name__ 
 
     def process(self , page , spider):
         raise NotImplmentError

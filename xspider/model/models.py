@@ -54,7 +54,7 @@ class ZResponse(Fileds):
 class Task(Fileds):
     
     def __init__(self,url,*argv,**kw):
-        super(Task, self).__init__(*argv,**kw):
+        super(Task, self).__init__(*argv,**kw)
         self["url"] = url
         self["headers"] = kw.get("headers",{})
         self["text"] = kw.get("text", "None")

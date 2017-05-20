@@ -4,13 +4,13 @@
 
 from xspider.spider.spider import BaseSpider
 from xspider.filters import urlfilter
-from xspider import processor
+from xspider.processor import PageProcessor 
 from xspider.selector import xpath_selector
 from xspider import model
 from b2 import system2
 system2.reload_utf8()
 
-class BuYiKr(processor.PageProcessor.PageProcessor):
+class BuYiKr(PageProcessor.PageProcessor):
 
 
     def __init__(self):

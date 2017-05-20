@@ -16,7 +16,7 @@ class Handler(object):
 
 
 
-    def handle502(self,request,response)
+    def handle502(self,request,response):
         pass
 
     def handleException(self,request,response,e):

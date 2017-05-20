@@ -39,7 +39,7 @@ def get_url_site(url):
         url = url[value:] if value else url    
         return url.split("/")[0]
     else:
-        raise TypeError("Unsupport type {}".format(type(url).__name__))
+        raise TypeError("extact url site get unsupport type {} value {}".format(type(url).__name__,url))
     return None 
 
 

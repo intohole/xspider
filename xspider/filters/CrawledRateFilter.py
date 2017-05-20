@@ -7,7 +7,7 @@
 
 from urlfilter import BaseFilter
 from ..libs import links
-
+import time
 
 
 __all__ = ["CrawledSiteRateFilter"]
@@ -18,7 +18,7 @@ class SiteRateInfo(object):
         self.count = 0
         self.time_type = time_type
         self.max_count = 0
-        self.time = 
+        self.time = time.time() 
 
     def dec(self):
         pass    
@@ -38,6 +38,6 @@ class CrawledSiteRateFilter(object):
         """
         url = selg.get_url(url)  
         site = links.get_url_site(url) 
-        if site.lower() = self._site:
+        if site.lower() == self._site:
             pass 
      
