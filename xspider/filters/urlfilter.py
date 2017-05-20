@@ -26,6 +26,9 @@ class BaseFilter(object):
         elif ( url and isinstance(url , basestring)) is False:
             raise ValueError
         return url
+    
+    def update(self,*argv,**kw):
+        pass
 
 class SiteFilter(BaseFilter):
     """根据站点过滤
@@ -53,7 +56,13 @@ class SiteFilter(BaseFilter):
             return False 
         return True 
 
-
+    def update(self,*argv,**kw):
+        site = kw.get("site",None)
+        if site and isinstance(site , basestring):
+            self.sites.add(site)        
+            return (True,None)
+        return (False,"unsupport type your input")
+        
 
 class UrlRegxFilter(BaseFilter):
     """链接正则过滤类

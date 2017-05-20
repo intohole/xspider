@@ -11,16 +11,27 @@ from ..libs import links
 
 
 __all__ = ["CrawledSiteRateFilter"]
+class SiteRateInfo(object):
+    
+    def __init__(self,site,time_type,max_count):
+        self.site = site 
+        self.count = 0
+        self.time_type = time_type
+        self.max_count = 0
+        self.time = 
+
+    def dec(self):
+        pass    
+
+    def isChange(self):
+        pass 
 
 class CrawledSiteRateFilter(object):
     """站点级别抓取频率控制；用于反扒
     """
     
     def __init__(self,site,count,rate_type = "hour"):
-        self._site = site 
-        self._count = count 
-        self._rate_type = rate_type
-    
+        pass
    
     def filter(self,url):
         """用于
@@ -29,3 +40,4 @@ class CrawledSiteRateFilter(object):
         site = links.get_url_site(url) 
         if site.lower() = self._site:
             pass 
+     

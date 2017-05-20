@@ -35,8 +35,7 @@ class ZRequest(Fileds):
         del d["url"]
         del d["dir_path"]
         return ZRequest(url,dir_path,**d)
-        
-        
+         
 
 class ZResponse(Fileds):
 
@@ -49,3 +48,16 @@ class ZResponse(Fileds):
         self["text"] = kw.get("text" , "None") 
         self["headers"] = kw.get("header" , {})
         self["crawl_time"] = kw.get("crawl_time" , time.time())
+
+
+
+class Task(Fileds):
+    
+    def __init__(self,url,*argv,**kw):
+        super(Task, self).__init__(*argv,**kw):
+        self["url"] = url
+        self["headers"] = kw.get("headers",{})
+        self["text"] = kw.get("text", "None")
+        self["crawled_time"] = kw.get("crawl_time" , time.time())
+        self["link_time"] = kw.get("link_time")
+        self["cookies"] = kw.get("cookies",{})
