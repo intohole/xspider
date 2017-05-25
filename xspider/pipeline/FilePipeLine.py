@@ -4,6 +4,8 @@
 from PipeLine import PipeLine
 import os
 from b2 import file2 
+from b2 import exceptions2
+import hashlib
 
 __all__ = ["FilePipe"]
 
@@ -20,24 +22,19 @@ class FilePipe(PipeLine):
         super(FilePipe , self).__init__()
         self.folder_path = kw.get("folder_path" , "./data")
         if not isinstance(self.folder_path , basestring):
-            raise TypeError("Unsupported type {}".format(type(folder_path).__name__)) 
-        self.spider = kw.get("spider" , None)
-        if self.spider is None or not ( hasattr( self.spider , "spid") and isinstance(getattr(self.spider , "spid") , basestring)):
-            raise ValueError("get not valueable spid attr")
-        self.work_folder = os.path.join(self.folder_path ,self.spider.spid)
-        file2.mkdir_p(os.path.join(self.work_folder , "data"))
+            exceptions2.raiseTypeError(self.folder_path)
+        self.work_folder = os.path.join(self.folder_path)
         self.map_file = kw.get("map_file" ,os.path.join(self.work_folder ,"map.result") )
         self.map_file_handle = open(self.map_file , "a")
+        self._md5 = hashlib.md5()
 
 
-    def excute(self , item , spider):
-        if item is None:
-            return False
-        write_path = os.path.join(self.work_folder,spider.count)
-        filehandle = open(write_path , "w")
-        filehandle.write("%s\n" % str(item))
-        filehandle.close()
-        self.map_file_handle.write("{write_path}\t{url}".format(write_path = write_path , url = item["request"]["url"]))
+    def excute(self , item):
+        url = item["request"]["url"]
+        md5 = self._md5.update(url).hexdigest()
+        with open(os.path.join(self.work_folder,md5),"w") as f:
+            f.write(json.dumps(item))
+        self.map_file_handle.write("{write_path}\t{url}".format(write_path = write_path , url = url))
 
 
     def destory(self,spider):
