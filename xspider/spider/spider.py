@@ -22,7 +22,7 @@ class BaseSpider(object):
 
     def __init__(self , name, *argv , **kw):
         self.log_level = kw.get("log_level" , "warn")
-        self.logger = log2.get_stream_logger(self.log_level)
+        self.logger = log2.get_stream_logger(self.log_level,name)
         self.name = name
         self.allow_site = kw.get("allow_site" , [])
         self.logger.info("spider {} init , allow_site {}".format(name,self.allow_site))

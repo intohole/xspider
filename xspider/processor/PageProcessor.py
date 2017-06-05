@@ -2,8 +2,9 @@
 
 from b2 import exceptions2 
 from ..model.fileds import Fileds
+from b2 import str2
 
-__all__ = ["PageProcessor","PageMatchStartUrlProcessor"]
+__all__ = ["PageProcessor","BasePageMatchUrlProcessor","PageMatchStartUrlProcessor","PageMatchEndsUrlProcessor"]
 
 class PageProcessor(object):
     """parse page or extract web fileds or do somthing 
@@ -22,8 +23,28 @@ class PageProcessor(object):
             self.process(page,spider)
 
 
-
-class PageMatchStartUrlProcessor(PageProcessor):
+class BasePageMatchUrlProcessor(PageProcessor):
+    """extract web filed by url prefix match
+    """    
+    
+    def __init__(self,name,url_pattern,lower = True):    
+        """init function
+            param:name:bastring:processor name
+            param:url_pattern:basestring:url prefix  
+            param:lower:blooean:lower url match
+            exception:ValueError:url_pattern is empty 
+            exception:TypeError:url_pattern's type not basestring
+            return:None
+        """
+        super(PageMatchStartUrlProcessor,self).__init__(name)
+        if str2.isBlank(url_pattern):
+            raise ValueError("url_pattern must be not empty string")
+        if not isinstance(start_url_pattern,basestring):
+            exceptions2.raiseTypeError(start_url_pattern)
+        self.lower = lower
+        self.url_pattern = url_pattern if self.lower is False else url_pattern.lower()
+         
+class PageMatchStartUrlProcessor(BasePageMatchUrlProcessor):
     """extract web filed by url prefix match
     """    
     
@@ -36,16 +57,29 @@ class PageMatchStartUrlProcessor(PageProcessor):
             exception:TypeError:start_url_pattern's type not basestring
             return:None
         """
-        super(PageMatchStartUrlProcessor,self).__init__(name)
-        if start_url_pattern is None and len(start_url_pattern) == 0:
-            raise ValueError("start_url_pattern must be bastring and have value")
-        if not isinstance(start_url_pattern,basestring):
-            exceptions2.raiseTypeError(start_url_pattern)
-        self.start_url_pattern = start_url_pattern if lower is False else start_url_pattern.lower()
-        self.lower = lower 
+        super(PageMatchStartUrlProcessor,self).__init__(name,start_url_pattern,lower)
          
     def match(self,page):
         url = page.request["url"].lower() if self.lower else page["url"] 
-        if url.startswith(self.start_url_pattern):
-            return True
-        return False
+        return True if self.url_pattern.startswith(url) else False
+
+
+
+class PageMatchEndsUrlProcessor(BasePageMatchUrlProcessor):
+    """extract web filed by url suffix match
+    """    
+    
+    def __init__(self,name,end_url_pattern,lower = True):    
+        """init function
+            param:name:bastring:processor name
+            param:end_url_pattern:basestring:url suffix  
+            param:lower:blooean:lower url match
+            exception:ValueError:start_url_pattern is empty 
+            exception:TypeError:start_url_pattern's type not basestring
+            return:None
+        """
+        super(PageMatchStartUrlProcessor,self).__init__(name,end_url_pattern,lower)
+         
+    def match(self,page):
+        url = page.request["url"].lower() if self.lower else page["url"] 
+        return True if self.url_pattern.endswith(url) else False
