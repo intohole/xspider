@@ -16,6 +16,7 @@ from ..filters.urlfilter import SiteFilter
 from ..selector.CssSelector import CssSelector
 from spiderlistener import DefaultSpiderListener
 from spiderlistener import SpiderListener
+import json
 
 class BaseSpider(object):
 
@@ -61,7 +62,9 @@ class BaseSpider(object):
                 links.update(self.url_filter(_links))
                 self.logger.debug("extract link {}".format(links))
                 items = self.page_processor.excute(page,self)
-                self.pipeline(items) if items else 0 
+                self.logger.debug("process items {} items {}".format(request["url"],json.dumps(items)))
+                if items:
+                    self.pipeline(items)
             for link in links:
                 self.url_pool.push(ZRequest(link , request["dir_path"] , *argv , **kw))
         self.crawl_stop()

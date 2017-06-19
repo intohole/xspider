@@ -24,5 +24,5 @@ class BuYiKr(PageProcessor.PageProcessor):
         return items
 
 if __name__ == "__main__":
-    spider = BaseSpider(name = "buyikr"  , page_processor = BuYiKr() , allow_site = ["buyiker.com"] , start_urls = ["http://buyiker.com/"])
+    spider = BaseSpider(name = "buyikr", page_processor = BuYiKr() , allow_site = ["buyiker.com"] , start_urls = ["http://buyiker.com/"])
     spider.start()

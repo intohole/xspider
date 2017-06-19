@@ -20,7 +20,7 @@ class PageProcessor(object):
 
     def excute(self,page,spider):
         if self.match(page):
-            self.process(page,spider)
+            return self.process(page,spider)
 
 
 class BasePageMatchUrlProcessor(PageProcessor):

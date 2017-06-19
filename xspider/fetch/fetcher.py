@@ -14,7 +14,7 @@ class _BaseFetcher(object):
     """
 
     def __init__(self , log_level = "DEBUG"):
-        self.logger = get_stream_logger(log_level)
+        self.logger = get_stream_logger(log_level,log_name = "fetcher")
 
     def request(self, urls, method='get', *argv, **kw):
         raise NotImplementedError
