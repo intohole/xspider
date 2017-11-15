@@ -5,6 +5,7 @@ from PipeLine import PipeLine
 import os
 from b2 import file2 
 from b2 import exceptions2
+import json
 import hashlib
 
 __all__ = ["FilePipe"]
