@@ -97,11 +97,11 @@ class BaseSpider(object):
             return []
         if len(self.site_filters):
             urls[:] = [ url for url in urls if self._filter(self.site_filters,url)]
-       if len(self.url_filters):
+        if len(self.url_filters):
             urls[:] = [ url for url in urls if self._filter(self.url_filters,url)]
-       if self.crawled_filter:
-            urls[:] = [url for url in urls if not self.crawled_filter(url)]
-       return urls
+        if self.crawled_filter:
+            urls[:] = [url for url in urls if not self.crawled_filter.filter(url)]
+        return urls
 
     def crawl_stop(self):
         self.listeners.notify("spider_stop" ,self)
