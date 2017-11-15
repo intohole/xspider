@@ -9,7 +9,7 @@ from ..fetch.fetcher import BaseRequestsFetcher
 from ..model.models import ZRequest
 from ..model.page import Page
 from ..pipeline.ConsolePipeLine import ConsolePipeLine
-from ..queue.SpiderQueue import MemoryFifoQueue 
+from ..queue.SpiderQueue import MemoryFifoQueue
 from ..libs import links
 from ..model.page import Page
 from ..filters.urlfilter import SiteFilter
@@ -43,7 +43,7 @@ class BaseSpider(object):
         self.listeners = SpiderListener()
         self.listeners.addListener(kw.get("listeners" , [DefaultSpiderListener()]))
         self.link_extractors = CssSelector("a[href]")
-        self.crawled_filter = kw.get("crawled_filter", None) 
+        self.crawled_filter = kw.get("crawled_filter", None)
 
     def setStartUrls(self , urls):
         self.start_urls.extend(urls)
@@ -86,31 +86,22 @@ class BaseSpider(object):
         for pipeline in self.pipelines:
             pipeline.process(page)
 
+    def _filter(self,url_filters,url):
+        for url_filter in url_filters:
+            if not url_filter.filter(url):
+                return True
+        return False
+
     def url_filter(self , urls):
-        if len(self.url_filters) == 0:
-            return urls
-        site_url = []
+        if urls is None or len(urls) == 0:
+            return []
         if len(self.site_filters):
-            for url in urls:
-                for site_filter in  self.site_filters:
-                    if not site_filter.filter(url):
-                        site_url.append(url) 
-                        break
-        else:
-            site_url.extend(urls) 
-        urls_result = []
-        for url in site_url:
-            for urlfilter in self.url_filters:
-                if not urlfilter.filter(url): #链接没有通过过滤器，返回True
-                    urls_result.append(url)
-                    break
-        if self.crawled_filter:
-            result = []
-            for url in urls_result:
-                if not self.crawled_filter.filter(url):# 链接不在已抓队列中
-                    result.append(url)                    
-            return result
-        return  urls_result 
+            urls[:] = [ url for url in urls if self._filter(self.site_filters,url)]
+       if len(self.url_filters):
+            urls[:] = [ url for url in urls if self._filter(self.url_filters,url)]
+       if self.crawled_filter:
+            urls[:] = [url for url in urls if self._filter(self.crawled_filter,url)]
+       return urls
 
     def crawl_stop(self):
         self.listeners.notify("spider_stop" ,self)
