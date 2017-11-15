@@ -1,6 +1,6 @@
 #coding=utf-8
 
-from ..selector.css_selector import CssSelector 
+from ..selector.CssSelector import CssSelector 
 import json 
 from lxml import etree
 try:
