@@ -1,11 +1,14 @@
 #coding=utf-8
 
+#coding=utf-8
+
 
 
 from xspider.spider.spider import BaseSpider
 from xspider.filters import urlfilter
-from xspider.processor import PageProcessor 
+from xspider.processor import PageProcessor
 from xspider.selector import XPathSelector
+from xspider.filters.crawledFilter import SimpleCrawledFilter
 from xspider import model
 from b2 import system2
 system2.reload_utf8()
@@ -24,5 +27,5 @@ class BuYiKr(PageProcessor.PageProcessor):
         return items
 
 if __name__ == "__main__":
-    spider = BaseSpider(name = "buyikr", page_processor = BuYiKr() , allow_site = ["buyiker.com"] , start_urls = ["http://buyiker.com/"])
+    spider = BaseSpider(name = "buyikr",crawled_filter =  SimpleCrawledFilter(), page_processor = BuYiKr() , allow_site = ["buyiker.com"] , start_urls = ["http://buyiker.com/"])
     spider.start()
