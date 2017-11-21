@@ -5,7 +5,7 @@
 
 
 from xspider.spider.spider import BaseSpider
-from xspider.filters import UrlFilter 
+from xspider.filters.UrlFilter import UrlDirPathFilter
 from xspider.processor import PageProcessor
 from xspider.selector import XPathSelector
 from xspider.filters.CrawledFilter import SimpleCrawledFilter
@@ -24,8 +24,9 @@ class BuYiKr(PageProcessor.PageProcessor):
         items = model.fileds.Fileds()
         items["title"] = self.title_extractor.find(page)
         items["url"] = page.url
+        items["level"] = page.request["dir_path"]
         return items
 
 if __name__ == "__main__":
-    spider = BaseSpider(name = "buyikr",crawled_filter =  SimpleCrawledFilter(), page_processor = BuYiKr() , allow_site = ["buyiker.com"] , start_urls = ["http://buyiker.com/"])
+    spider = BaseSpider(name = "buyikr",crawled_filter = SimpleCrawledFilter() , url_filter = [UrlDirPathFilter(dir_path_limit = 1)], page_processor = BuYiKr() , allow_site = ["buyiker.com"] , start_urls = ["http://buyiker.com/"])
     spider.start()

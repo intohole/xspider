@@ -5,7 +5,7 @@
 
 
 
-from urlfilter import BaseFilter
+from UrlFilter import BaseFilter
 from ..libs import links
 import time
 

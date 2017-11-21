@@ -4,16 +4,23 @@ from ..libs import links
 import re
 import json
 
-__all__ = ["SiteFilter","UrlRegxFilter","UrlDirPathFilter"]
+__all__ = ["BaseFilter","SiteFilter","UrlRegxFilter","UrlDirPathFilter"]
 
 class BaseFilter(object):
 
-    def __init__(self , filter_name):
+    def __init__(self , filter_name, must_check = False,priority = 0):
         self.filter_name = filter_name
+        self._must_check = must_check 
+        self._priority = priority 
 
     def filter(self , url):
         raise NotImplmentError
 
+    def must_check(self):
+        return self._must_check
+
+    def priority(self):
+        return self._priority
     
     def __str__(self):
         return json.dumps({"filterName":self.filter_name})
@@ -143,7 +150,7 @@ class UrlDirPathFilter(BaseFilter):
     """
 
     def __init__(self , dir_path_limit = None ):
-        super(UrlDirPathFilter , self).__init__("url_dirpath_filter")
+        super(UrlDirPathFilter , self).__init__("url_dirpath_filter",must_check = True,priority = 100)
         if dir_path_limit and isinstance(dir_path_limit , (int , long)) and dir_path_limit > 0:
             self.dir_path_limit = dir_path_limit 
         else:
@@ -160,6 +167,3 @@ class UrlDirPathFilter(BaseFilter):
                 return False
             return True 
         raise TypeError
-
-            
-

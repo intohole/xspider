@@ -5,6 +5,7 @@
 from b2 import log2
 from b2 import rand2
 from b2 import str2
+from b2 import sort2 
 from ..fetch.fetcher import BaseRequestsFetcher
 from ..model.models import ZRequest
 from ..model.page import Page
@@ -39,7 +40,9 @@ class BaseSpider(object):
         self.logger.info("init")
         self.before_crawl = kw.get("before_crawl",[]) # before crawl do something
         self.site_filters = [SiteFilter(site) for site in self.allow_site]
-        self.url_filters = kw.get("url_filters",[])
+        url_filters = kw.get("url_filters",[])
+        sort2.sort_list_object(url_filters,"_priority")
+        self.url_filters = url_filters 
         self.listeners = SpiderListener()
         self.listeners.addListener(kw.get("listeners" , [DefaultSpiderListener()]))
         self.link_extractors = CssSelector("a[href]")
@@ -87,8 +90,14 @@ class BaseSpider(object):
             pipeline.process(page)
 
     def _filter(self,url_filters,url):
+        """filter 
+        """
         for url_filter in url_filters:
-            if not url_filter.filter(url):
+            _filter = url_filter.filter(url)
+            # if url_filter must be check and url not match filter , so url filtered
+            if _filter is True and url_filter.must_check():
+                return False
+            if not _filter:
                 return True
         return False
 
