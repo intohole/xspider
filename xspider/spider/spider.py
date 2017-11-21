@@ -13,7 +13,7 @@ from ..pipeline.ConsolePipeLine import ConsolePipeLine
 from ..queue.SpiderQueue import MemoryFifoQueue
 from ..libs import links
 from ..model.page import Page
-from ..filters.urlfilter import SiteFilter
+from ..filters.UrlFilter import SiteFilter
 from ..selector.CssSelector import CssSelector
 from spiderlistener import DefaultSpiderListener
 from spiderlistener import SpiderListener
