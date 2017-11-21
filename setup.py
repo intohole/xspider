@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 kw = dict(
     name='xspider',
-    version='0.0.5',
+    version='0.0.6',
     description='simple spider',
     author='intohole',
     author_email='intoblack86@gmail.com',
