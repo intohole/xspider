@@ -34,14 +34,14 @@ xspider
 		class KuaiLiYu(processor.PageProcessor.PageProcessor):
 
     		def __init__(self):
-				super(KuaiLiYu , self).__init__()
-        		self.title_extractor = xpath_selector.XpathSelector(path = "//title/text()")
+		    super(KuaiLiYu , self).__init__()
+        	    self.title_extractor = xpath_selector.XpathSelector(path = "//title/text()")
 
     		def process(self , page , spider):
-        		items = model.fileds.Fileds()
-        		items["title"] = self.title_extractor.find(page)
-        		items["url"] = page.url
-        		return items
+        	    items = model.fileds.Fileds()
+        	    items["title"] = self.title_extractor.find(page)
+        	    items["url"] = page.url
+        	    return items
 
 			
 
