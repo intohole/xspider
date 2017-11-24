@@ -14,7 +14,11 @@ class BaseFilter(object):
         self._priority = priority 
 
     def filter(self , url):
-        raise NotImplmentError
+        """url match relu
+            param:url:page:请求的页面
+            return:filter:boolean:如果被过滤掉返回True,否则返回False
+        """
+        return False 
 
     def must_check(self):
         return self._must_check
@@ -135,6 +139,8 @@ class UrlEndFilter(BaseFilter):
         self.suffix = suffix
     
     def filter(self, url):
+        """如果url链接不符合后缀,则返回过滤状态
+        """
         if url and isinstance(url , dict) and "url" in url:
             url = url["url"]
         elif url and hasattr(url , "url"):
@@ -151,7 +157,7 @@ class UrlDirPathFilter(BaseFilter):
 
     def __init__(self , dir_path_limit = None ):
         super(UrlDirPathFilter , self).__init__("url_dirpath_filter",must_check = True,priority = 100)
-        if dir_path_limit and isinstance(dir_path_limit , (int , long)) and dir_path_limit > 0:
+        if dir_path_limit is not None and isinstance(dir_path_limit , (int , long)) and dir_path_limit >= 0:
             self.dir_path_limit = dir_path_limit 
         else:
             raise TypeError
@@ -164,6 +170,6 @@ class UrlDirPathFilter(BaseFilter):
             if _dir_path is None:
                 raise Exception , "%s is not set dirpath" % request
             if _dir_path > self.dir_path_limit:
-                return False
-            return True 
+                return True 
+            return False 
         raise TypeError

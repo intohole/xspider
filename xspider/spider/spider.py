@@ -90,24 +90,24 @@ class BaseSpider(object):
             pipeline.process(page)
 
     def _filter(self,url_filters,url):
-        """filter 
+        """如果被过滤，则返回True,否则返回False 
         """
         for url_filter in url_filters:
             _filter = url_filter.filter(url)
             # if url_filter must be check and url not match filter , so url filtered
             if _filter is True and url_filter.must_check():
-                return False
+                return True 
             if not _filter:
-                return True
-        return False
+                return False 
+        return True 
 
     def url_filter(self , urls):
         if urls is None or len(urls) == 0:
             return []
         if len(self.site_filters):
-            urls[:] = [ url for url in urls if self._filter(self.site_filters,url)]
+            urls[:] = [ url for url in urls if not self._filter(self.site_filters,url)]
         if len(self.url_filters):
-            urls[:] = [ url for url in urls if self._filter(self.url_filters,url)]
+            urls[:] = [ url for url in urls if not self._filter(self.url_filters,url)]
         if self.crawled_filter:
             urls[:] = [url for url in urls if not self.crawled_filter.filter(url)]
         return urls

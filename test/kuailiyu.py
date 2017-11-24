@@ -19,4 +19,3 @@ class KuaiLiYu(processor.PageProcessor.PageProcessor):
         items["title"] = self.title_extractor.find(page)
         items["url"] = page.url
         return items
-
