@@ -1,7 +1,5 @@
 #coding=utf-8
 
-#coding=utf-8
-
 
 
 from xspider.spider.spider import BaseSpider

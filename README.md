@@ -12,34 +12,40 @@ xspider
 + 架构代码逻辑清晰，可以了解spider抓取过程
 + it's easy to crawl and extract web;
 
-```python
-main.py:
+API
+---------
++ [api文档](api.md)
 
-    from xspider.spider.spider import BaseSpider
-    from xspider.filters import urlfilter
-    from kuailiyu import KuaiLiYu
+```python
+#coding=utf-8
+
+
+
+from xspider.spider.spider import BaseSpider
+from xspider.filters import UrlFilter 
+from xspider.processor import PageProcessor
+from xspider.selector import XPathSelector
+from xspider.filters.CrawledFilter import SimpleCrawledFilter
+from xspider import model
+from b2 import system2
+system2.reload_utf8()
+
+class BuYiKr(PageProcessor.PageProcessor):
+
+
+    def __init__(self):
+        super(BuYiKr , self).__init__()
+        self.title_extractor = XPathSelector.XpathSelector(path = "//title/text()")
+
+    def process(self , page , spider):
+        items = model.fileds.Fileds()
+        items["title"] = self.title_extractor.find(page)
+        items["url"] = page.url
+        return items
 
 if __name__ == "__main__":
-    spider = BaseSpider(name = "kuailiyu"  , page_processor = KuaiLiYu() , allow_site = ["kuailiyu.cyzone.cn"] , start_urls = ["http://kuailiyu.cyzone.cn/"])
-    spider.url_filters.append(urlfilter.UrlRegxFilter(["kuailiyu.cyzone.cn/article/[0-9]*\.html$","kuailiyu.cyzone.cn/index_[0-9]+.html$"]))
+    spider = BaseSpider(name = "buyikr",crawled_filter =  SimpleCrawledFilter(), page_processor = BuYiKr() , allow_site = ["buyiker.com"] , start_urls = ["http://buyiker.com/"])
     spider.start()
-
-kuailiyu.py
-    from xspider import processor 
-    from xspider.selector import xpath_selector
-    from xspider import model
-
-    class KuaiLiYu(processor.PageProcessor.PageProcessor):
-
-        def __init__(self):
-            super(KuaiLiYu , self).__init__()
-            self.title_extractor = xpath_selector.XpathSelector(path = "//title/text()")
-
-        def process(self , page , spider):
-            items = model.fileds.Fileds()
-            items["title"] = self.title_extractor.find(page)
-            items["url"] = page.url
-            return items
 ```         
 
 
