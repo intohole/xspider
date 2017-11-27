@@ -65,6 +65,36 @@ xspider部分api
             - dir_path_limit 链接保留最大层级
         - 为了避免过深入抓取链接，使用链接层级过滤，注明，使用此过滤器，如果不符合条件，直接链接丢弃，不再处理
 
-
+    + xspider.filters.UrlFilter.CrawledFilter.SimpleCrawledFilter
+        - 直接使用set类型作为抓取过滤，如果设置此过滤类型，请注意内存，另外会直接过滤已经抓取链接
+    + xspider.filters.UrlFilter.CrawledFilters.BloomCrawledFilter
+        - 参数
+            - bloom_file 序列化数据保存位置
+            - url_size 链接保存的大小
+            - error_rate 撞击概率,默认值0.001
+        - 使用bloom过滤器，过滤已经抓取的链接，因算法原因，链接有概率被重复抓取，但设置参数可以将概率下降到最低，主要是为了内存较少爬虫使用
 + 队列
+    + xspider.queue.DiskQueue.SpiderFifoDiskQueue
+        - 参数
+            - save_folder 队列序列化位置
+            - chunk_size 文件队列单文件保存的条数
+            - queue_len 队列最大大小，默认无限制
+        - 队列线程不安全，请使用的时候注意，先进先出队列，适合广度搜索
+
+    + xspider.queue.DiskQueue.SpiderLifoDiskQueue
+        - 参数
+            - queue_file 队列文件
+            - queue_len 文件最大存储大小
+        - 队列线程不安全，后进先出队列，适合深度搜索
+
+    + xspider.queue.SpiderQueue.MemoryLifoQueue
+        - 参数
+            - queue_len 队列最大大小
+        - 队列线程安全，存储在内存中，后进先出队列，适合深度搜索
+
+    + xspider.queue.SpiderQueue.MemoryFifoQueue
+        - 参数
+            - queue_len 队列最大大小
+        - 队列线程安全,存储在内存中，先进先出队列，适合广度搜索
+
 + 选取器
