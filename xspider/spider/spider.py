@@ -41,6 +41,7 @@ class BaseSpider(object):
         self.before_crawl = kw.get("before_crawl",[]) # before crawl do something
         self.site_filters = [SiteFilter(site) for site in self.allow_site]
         url_filters = kw.get("url_filters",[])
+        url_filters.extend(self.site_filters)
         sort2.sort_list_object(url_filters,"_priority")
         self.url_filters = url_filters 
         self.listeners = SpiderListener()
@@ -104,8 +105,8 @@ class BaseSpider(object):
     def url_filter(self , urls):
         if urls is None or len(urls) == 0:
             return []
-        if len(self.site_filters):
-            urls[:] = [ url for url in urls if not self._filter(self.site_filters,url)]
+        #if len(self.site_filters):
+        #    urls[:] = [ url for url in urls if not self._filter(self.site_filters,url)]
         if len(self.url_filters):
             urls[:] = [ url for url in urls if not self._filter(self.url_filters,url)]
         if self.crawled_filter:

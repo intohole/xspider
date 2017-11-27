@@ -6,7 +6,7 @@
 
 from UrlFilter import BaseFilter
 import os
-
+from ..libs import priority
 
 
 
@@ -20,9 +20,8 @@ class SimpleCrawledFilter(BaseFilter):
             >>> url_filter.filter("https://www.baidu.com")
             >>> url_filter.filter("https://www.baidu.com")
     """
-
     def __init__(self):
-        super(SimpleCrawledFilter,self).__init__("simple_crawled_filter")
+        super(SimpleCrawledFilter,self).__init__("simple_crawled_filter",must_check = True, priority = priority.FILTER_PRIORITY.VERY_HIGH)
         self.crawled = set()
 
     def filter(self,url):
@@ -51,6 +50,7 @@ class BloomCrawledFilter(BaseFilter):
                 >>> bloom.filter("https://www.baidu.com")
                 >>> bloom.filter("https://www.baidu.com")
         """
+        super(BloomCrawledFilter,self).__init__("bloom_crawled_filter",must_check = True, priority = priority.FILTER_PRIORITY.VERY_HIGH)
         self.bloom = None
         self.bloom_file = bloom_file
         self.error_rate = error_rate

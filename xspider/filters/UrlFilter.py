@@ -3,12 +3,13 @@
 from ..libs import links
 import re
 import json
+from ..libs import priority
 
 __all__ = ["BaseFilter","SiteFilter","UrlRegxFilter","UrlDirPathFilter"]
 
 class BaseFilter(object):
 
-    def __init__(self , filter_name, must_check = False,priority = 0):
+    def __init__(self , filter_name, must_check = False,priority = priority.FILTER_PRIORITY.NONE):
         self.filter_name = filter_name
         self._must_check = must_check 
         self._priority = priority 
@@ -19,6 +20,9 @@ class BaseFilter(object):
             return:filter:boolean:如果被过滤掉返回True,否则返回False
         """
         return False 
+    
+    def set_must_check(self):
+        self._must_check = True
 
     def must_check(self):
         return self._must_check
@@ -47,7 +51,7 @@ class SiteFilter(BaseFilter):
     """
 
     def __init__(self , sites):
-        super(SiteFilter , self).__init__("site_filter")
+        super(SiteFilter , self).__init__("site_filter",must_check = True,priority = priority.FILTER_PRIORITY.VERY_HIGH)
         self.sites = set()    
         self._add_site(sites)
 
@@ -156,7 +160,7 @@ class UrlDirPathFilter(BaseFilter):
     """
 
     def __init__(self , dir_path_limit = None ):
-        super(UrlDirPathFilter , self).__init__("url_dirpath_filter",must_check = True,priority = 100)
+        super(UrlDirPathFilter , self).__init__("url_dirpath_filter",must_check = True,priority = priority.FILTER_PRIORITY.VERY_HIGH)
         if dir_path_limit is not None and isinstance(dir_path_limit , (int , long)) and dir_path_limit >= 0:
             self.dir_path_limit = dir_path_limit 
         else:

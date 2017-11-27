@@ -1,10 +1,8 @@
 #coding=utf-8
 
-#coding=utf-8
 
 
 from b2 import object2
-
 
 def test():
     """Http 状态返回码
@@ -15,8 +13,18 @@ def test():
             >>> print HTTP_CODE.unsupported_media_type
             >>> HTTP_CODE.not_extended == 510
             >>> print HTTP_CODE.not_extended
+            >>> FILTER_PRIORITY.NONE == 0 
+               True
     """
     pass
+
+
+
+
+FILTER_PRIORITY = object2.enum("HIGHEST=100 VERY_HIGH=90 HIGH=80 MIDDLE=70 LOW=60 VERY_LOW=50 LOWEST=40 NONE=0" , split_char = "=")
+
+
+
 
 HTTP_CODE = object2.enum("continue=100 swiching_protocols \
         ok=200 created accepted non_auth no_content reset_content partial_content \
