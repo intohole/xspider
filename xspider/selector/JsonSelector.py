@@ -5,10 +5,10 @@ from b2.json2 import json2
 import json
 from b2 import exceptions2
 
-class JsonExtractor(BaseExtractor):
+class JsonSelector(BaseSelector):
 
     def __init__(self ,  **kw):
-        super(JsonExtractor , self).__init__("json" , **kw)
+        super(JsonSelector , self).__init__("json" , **kw)
         self.query = kw.get("query" , None) 
         exceptions2.judge_null(self.query)
         self.jpath = json2.JPath(self.query) 
