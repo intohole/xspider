@@ -17,6 +17,7 @@ from ..filters.UrlFilter import SiteFilter
 from ..selector.CssSelector import CssSelector
 from spiderlistener import DefaultSpiderListener
 from spiderlistener import SpiderListener
+from b2 import exceptions2
 import json
 
 class BaseSpider(object):
@@ -29,6 +30,7 @@ class BaseSpider(object):
         self.allow_site = kw.get("allow_site" , [])
         self.logger.info("spider {} init , allow_site {}".format(name,self.allow_site))
         self.start_urls = kw.get("start_urls" , [])
+        exceptions2.judge_null(self.start_urls)
         self.page_processor = kw.get("page_processor")
         if self.page_processor is None:
             raise ValueError("page processor not set ! can't run ")
@@ -62,17 +64,20 @@ class BaseSpider(object):
             links = set()
             for response in self.fetcher.fetch(request):
                 page = Page(request , response , request["dir_path"])
-                _links = self.extract_links(page)
-                links.update(self.url_filter(_links))
+                requests = [ self._make_request(link,request) for link in self.extract_links(page) if link not in links] 
+                links.update( request["url"] for request in requests)
+                requests = self.url_filter(requests)
                 self.logger.debug("extract link {}".format(links))
                 items = self.page_processor.excute(page,self)
                 self.logger.debug("process items {} items {}".format(request["url"],json.dumps(items)))
                 if items:
                     self.pipeline(items)
-            for link in links:
-                self.url_pool.push(ZRequest(link , request["dir_path"] , *argv , **kw))
+            for request in requests:
+                self.url_pool.push(request)
         self.crawl_stop()
 
+    def _make_request(self,link,request, *argv, **kw):
+        return ZRequest(link,request["dir_path"], *argv, **kw)
 
     def _make_start_request(self , *argv , **kw):
         for url in self.start_urls:
@@ -108,7 +113,7 @@ class BaseSpider(object):
         #if len(self.site_filters):
         #    urls[:] = [ url for url in urls if not self._filter(self.site_filters,url)]
         if len(self.url_filters):
-            urls[:] = [ url for url in urls if not self._filter(self.url_filters,url)]
+            urls[:] = [url for url in urls if not self._filter(self.url_filters,url)]
         if self.crawled_filter:
             urls[:] = [url for url in urls if not self.crawled_filter.filter(url)]
         return urls

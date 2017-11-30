@@ -98,3 +98,10 @@ xspider部分api
         - 队列线程安全,存储在内存中，先进先出队列，适合广度搜索
 
 + 选取器
+    + xspider.selector.CssSelector.CssSelector
+        - 参数
+            - css css选取器字符串
+        - 通过生成规则，对html进行解析
+    + xspider.selector.JsonSelector.JsonExtractor
+        - 参数
+            - paths

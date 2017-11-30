@@ -28,5 +28,5 @@ class BuYiKr(PageProcessor.PageProcessor):
         return items
 
 if __name__ == "__main__":
-    spider = BaseSpider(name = "buyikr",crawled_filter = SimpleCrawledFilter() , url_filter = [UrlDirPathFilter(dir_path_limit = 0)], page_processor = BuYiKr() , allow_site = ["buyiker.com"] , start_urls = ["http://buyiker.com/"])
+    spider = BaseSpider(name = "buyikr",crawled_filter = SimpleCrawledFilter() , url_filters = [UrlDirPathFilter(dir_path_limit = 2)], page_processor = BuYiKr() , allow_site = ["buyiker.com"] , start_urls = ["http://buyiker.com/"])
     spider.start()

@@ -3,20 +3,15 @@
 from selector import BaseSelector
 from b2.json2 import json2
 import json
+from b2 import exceptions2
 
 class JsonExtractor(BaseExtractor):
 
     def __init__(self ,  **kw):
         super(JsonExtractor , self).__init__("json" , **kw)
-        self.paths = kw.get("paths" , None)
-        if isinstance(self.paths , basestring):
-            self.paths = self.paths.split()
-        if isinstance(self.paths , (list , tuple)) is False:
-            raise ValueError
         self.query = kw.get("query" , None) 
-        if self.query is None and self.paths is None:
-            raise ValueError
-        self.jpath = json2.JPath() 
+        exceptions2.judge_null(self.query)
+        self.jpath = json2.JPath(self.query) 
 
 
     def finds(self , page):
