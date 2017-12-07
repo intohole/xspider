@@ -30,8 +30,7 @@ class BaseSpider(object):
         self.start_urls = kw.get("start_urls", [])
         exceptions2.judge_null(self.start_urls)
         self.page_processor = kw.get("page_processor")
-        if self.page_processor is None:
-            raise ValueError("page processor not set ! can't run ")
+        exceptions2.judge_null(self.page_processor)
         self.fetcher = kw.get("fetcher", BaseRequestsFetcher())
         self.pipelines = kw.get("pipeline", [ConsolePipeLine()])
         self.run_flag = True

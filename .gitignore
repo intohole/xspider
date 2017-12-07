@@ -9,3 +9,4 @@ dist/*
 *bak/
 *.ropeproject/
 GithubCN.py
+*.txt

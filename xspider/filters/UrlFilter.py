@@ -4,6 +4,7 @@ from ..libs import links
 import re
 import json
 from ..libs import priority
+from b2 import exceptions2
 
 __all__ = ["BaseFilter", "SiteFilter", "UrlRegxFilter", "UrlDirPathFilter"]
 
@@ -66,15 +67,16 @@ class SiteFilter(BaseFilter):
         self._add_site(sites)
 
     def _add_site(self, site):
-        if site:
-            if isinstance(site, basestring):
-                self.sites.add(site)
-            elif isinstance(site, (list, tuple, set)):
-                self.sites.update(site)
-            else:
-                raise ValueError
+        exceptions2.judge_null(site)
+        if isinstance(site, basestring):
+            self.sites.add(site)
+        elif isinstance(site, (list, tuple, set)):
+            self.sites.update(site)
+        else:
+            raise ValueError
 
     def filter(self, url):
+        url = self.get_url(url)
         url_site = links.get_url_site(url)
         if url_site in self.sites:
             return False
