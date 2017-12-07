@@ -1,38 +1,36 @@
 #coding=utf-8
 
-
 import spider as spiderman
 
-__ALL__ = ["SpiderListener" , "Listener" , "DefaultSpiderListener"]
+__ALL__ = ["SpiderListener", "Listener", "DefaultSpiderListener"]
+
 
 class SpiderListener(object):
-    
     def __init__(self):
-        self.listerners = {} 
+        self.listerners = {}
 
-    def addListener(self , listener):
-        if listener and isinstance(listener , Listener):
+    def addListener(self, listener):
+        if listener and isinstance(listener, Listener):
             self.listerners[id(listener)] = listener
-            return id(listener) 
-        elif listener and isinstance(listener ,(list , tuple)):
+            return id(listener)
+        elif listener and isinstance(listener, (list, tuple)):
             for _listerner in listener:
                 self.addListener(_listerner)
         return False
 
-    def removeListener(self , listern_id ):
+    def removeListener(self, listern_id):
         if listern_id and listern_id in self.listerners:
             del self.listerns[listern_id]
             return True
         return False
 
-    def notify(self , msg , spider):
+    def notify(self, msg, spider):
         for listener in self.listerners.values():
-            listener.notify(msg ,spider)
+            listener.notify(msg, spider)
 
 
 class Listener(object):
-
-    def notify(self , msg):
+    def notify(self, msg):
         raise NotImplmentError
 
 
@@ -43,23 +41,20 @@ class DefaultSpiderListener(Listener):
             >>> sl.spider_stop(self , spider)
     """
 
-
-    def spider_stop(self , spider):
-        if spider and isinstance(spider , spiderman.BaseSpider):
-            if hasattr(spider , "pielines"): 
-                pielines = getattr(spider , "pielines")
+    def spider_stop(self, spider):
+        if spider and isinstance(spider, spiderman.BaseSpider):
+            if hasattr(spider, "pielines"):
+                pielines = getattr(spider, "pielines")
                 for pieline in pielines:
                     pieline.destory(spider)
-            if hasattr(spider , "url_pool"):
-                url_pool = getattr(spider , "url_pool")
-                if url_pool and hasattr(url_pool , "close"):
+            if hasattr(spider, "url_pool"):
+                url_pool = getattr(spider, "url_pool")
+                if url_pool and hasattr(url_pool, "close"):
                     url_pool.close()
-            
-    
 
-    def spider_start(self , spider):
+    def spider_start(self, spider):
         pass
 
-    def notify(self , msg , spider):
-        if hasattr(self ,msg) and callable(getattr(self ,msg)):
-            getattr(self , msg)(spider)
+    def notify(self, msg, spider):
+        if hasattr(self, msg) and callable(getattr(self, msg)):
+            getattr(self, msg)(spider)

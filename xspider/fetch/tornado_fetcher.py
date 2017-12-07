@@ -3,6 +3,8 @@ import copy
 import json
 import time
 
+from ..model.models import ZResponse
+
 import tornado.httpclient
 from tornado.curl_httpclient import CurlAsyncHTTPClient
 import tornado.ioloop
@@ -29,14 +31,20 @@ class Fetcher(object):
         'timeout': 120,
     }
 
-    def __init__(self, phantomjs_proxy='http://localhost:25555', user_agent='', pool_size=100, async=False):
+    def __init__(self,
+                 phantomjs_proxy='http://localhost:25555',
+                 user_agent='',
+                 pool_size=100,
+                 async=False):
         self.phantomjs_proxy = phantomjs_proxy
         self.user_agent = user_agent
         self.async = async
         if self.async:
-            self.http_client = CurlAsyncHTTPClient(max_clients=pool_size, io_loop=tornado.ioloop.IOLoop())
+            self.http_client = CurlAsyncHTTPClient(
+                max_clients=pool_size, io_loop=tornado.ioloop.IOLoop())
         else:
-            self.http_client = tornado.httpclient.HTTPClient(max_clients=pool_size)
+            self.http_client = tornado.httpclient.HTTPClient(
+                max_clients=pool_size)
 
     @staticmethod
     def parse_option(default_options, url, user_agent, **kwargs):
@@ -50,12 +58,11 @@ class Fetcher(object):
         fetch['load_images'] = kwargs.get('load_images', False)
         return fetch
 
-    def phantomjs_fetch(self, url, **kwargs):
+    def request(self, urls, method='get', *argv, **kw):
         start_time = time.time()
-        fetch = self.parse_option(self.default_options, url, user_agent=self.user_agent, **kwargs)
-        request_conf = {
-            'follow_redirects': False
-        }
+        fetch = self.parse_option(
+            self.default_options, url, user_agent=self.user_agent, **kw)
+        request_conf = {'follow_redirects': False}
         if 'timeout' in fetch:
             request_conf['connect_timeout'] = fetch['timeout']
             request_conf['request_timeout'] = fetch['timeout'] + 1
@@ -71,10 +78,11 @@ class Fetcher(object):
                 return handle_error(e)
 
             if result.get('status_code', 200):
-                logging.info('[%d] %s %.2fs', result['status_code'], url, result['time'])
+                logging.info('[%d] %s %.2fs', result['status_code'], url,
+                             result['time'])
             else:
-                logging.error('[%d] %s, %r %.2fs', result['status_code'],
-                              url, result['content'], result['time'])
+                logging.error('[%d] %s, %r %.2fs', result['status_code'], url,
+                              result['content'], result['time'])
             return result
 
         def handle_error(error):
@@ -86,14 +94,16 @@ class Fetcher(object):
                 'orig_url': url,
                 'url': url,
             }
-            logging.error('[%d] %s, %r %.2fs',
-                          result['status_code'], url, error, result['time'])
+            logging.error('[%d] %s, %r %.2fs', result['status_code'], url,
+                          error, result['time'])
             return result
 
         try:
             request = tornado.httpclient.HTTPRequest(
-                url='%s' % self.phantomjs_proxy, method='POST',
-                body=json.dumps(fetch), **request_conf)
+                url='%s' % self.phantomjs_proxy,
+                method='POST',
+                body=json.dumps(fetch),
+                **request_conf)
             if self.async:
                 self.http_client.fetch(request, handle_response)
             else:

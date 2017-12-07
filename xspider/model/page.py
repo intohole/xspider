@@ -1,8 +1,8 @@
 #coding=utf-8
 
-from ..selector.CssSelector import CssSelector 
 import json 
 from lxml import etree
+from ..libs import links
 try:
     from bs4 import BeautifulSoup
     # 应该将方法都归一化成一个 ， 后续会阅读文档做下
@@ -12,11 +12,13 @@ except:
 
 
 class Page(object):
-
+    """页面信息保存体
+    """
 
 
     def __init__(self ,request , response , dir_path ):
         self.url = request["url"] # 抓取链接 
+        self.site = links.get_url_site(self.url) 
         self.request = request # 抓取请求体
         self.raw_text = response["text"] # 抓取返回体页面
         self.json = None  # json 
