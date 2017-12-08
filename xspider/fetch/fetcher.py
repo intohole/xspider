@@ -54,6 +54,8 @@ class BaseRequestsFetcher(_BaseFetcher):
                 params=request["params"],
                 headers=request["headers"])
             if response and response.status_code == requests.codes.ok:
+                if request["coding"]:
+                    response.encoding = request["coding"]
                 yield ZResponse(
                     response.url,
                     request["pre_url"],
@@ -65,4 +67,4 @@ class BaseRequestsFetcher(_BaseFetcher):
                     format(
                         url=request["url"],
                         preurl=request["pre_url"],
-                        status_code=esponse.status_code))
+                        status_code=response.status_code))

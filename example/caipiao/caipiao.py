@@ -30,12 +30,17 @@ class KaiJiang(PageProcessor.PageProcessor):
             path=
             "//table[@class='kj_tablelist02'][1]/tr[2]/td/table/tr[2]/td[2]/text()"
         )
+        d = u'出球'
+        self.fahao_extractor4 = XPathSelector.XpathSelector(
+            path="//tr/td[contains(text(),'%s')]/../td[2]/text()" % d)
 
     def process(self, page, spider):
         items = model.fileds.Fileds()
         items["url"] = page.url
         items["qishu"] = page.url.split("/")[-1].split(".")[0]
-        fahao = self.fahao_extractor.find(page)
+        fahao = self.fahao_extractor4.find(page)
+        if fahao is None:
+            fahao = self.fahao_extractor.find(page)
         if fahao is None:
             fahao = self.fahao_extractor2.find(page)
         if fahao is None:
@@ -52,6 +57,7 @@ if __name__ == "__main__":
     url_filters = [start_url_filter]
     spider = BaseSpider(
         name="kaijiang",
+        fetch_coding="utf-8",
         url_filters=url_filters,
         crawled_filter=SimpleCrawledFilter(),
         page_processor=KaiJiang(),

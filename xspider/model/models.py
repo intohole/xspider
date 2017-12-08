@@ -19,6 +19,7 @@ class ZRequest(Fileds):
                 'User-Agent':
                 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:23.0) Gecko/20100101 Firefox/23.0'
             })
+        self["coding"] = kw.get("fetch_coding", None)
         self["dir_path"] = dir_path + 1
 
     def dumps(self):

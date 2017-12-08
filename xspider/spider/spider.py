@@ -45,6 +45,7 @@ class BaseSpider(object):
         sort2.sort_list_object(url_filters, "_priority")
         self.url_filters = url_filters
         self.listeners = SpiderListener()
+        self.fetch_coding = kw.get("fetch_coding", None)
         self.listeners.addListener(
             kw.get("listeners", [DefaultSpiderListener()]))
         self.link_extractors = CssSelector("a[href]")
@@ -55,6 +56,7 @@ class BaseSpider(object):
 
     def start(self, *argv, **kw):
         self.crawl_start()
+        kw["fetch_coding"] = self.fetch_coding
         self._make_start_request(*argv, **kw)
         self.logger.info("spider {} get start request".format(self.name))
         while self.url_pool.empty() is False and self.run_flag:
