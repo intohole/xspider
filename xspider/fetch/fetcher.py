@@ -41,6 +41,7 @@ class BaseRequestsFetcher(_BaseFetcher):
                 if response and response.status_code == requests.codes.ok:
                     yield ZResponse(
                         response.url,
+                        _request["pre_url"],
                         status_code=response.status_code,
                         text=response.text)
                 else:
@@ -55,8 +56,13 @@ class BaseRequestsFetcher(_BaseFetcher):
             if response and response.status_code == requests.codes.ok:
                 yield ZResponse(
                     response.url,
+                    request["pre_url"],
                     status_code=response.status_code,
                     text=response.text)
             else:
-                self.logger.error("download %s fail , status_code: %s" %
-                                  (request["url"], response.status_code))
+                self.logger.error(
+                    "download {url} fail , preurl : {preurl} , status_code: {status_code}".
+                    format(
+                        url=request["url"],
+                        preurl=request["pre_url"],
+                        status_code=esponse.status_code))

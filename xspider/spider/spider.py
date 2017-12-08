@@ -80,12 +80,13 @@ class BaseSpider(object):
         self.crawl_stop()
 
     def _make_request(self, link, request, *argv, **kw):
-        return ZRequest(link, request["dir_path"], *argv, **kw)
+        return ZRequest(link, request["pre_url"], request["dir_path"], *argv,
+                        **kw)
 
     def _make_start_request(self, *argv, **kw):
         for url in self.start_urls:
             self.logger.debug("add start url [{url}]".format(url=url))
-            self.url_pool.push(ZRequest(url, 0, *argv, **kw))
+            self.url_pool.push(ZRequest(url, None, 0, *argv, **kw))
 
     def extract_links(self, page):
         parrent_link = page.request["url"]
@@ -119,8 +120,6 @@ class BaseSpider(object):
     def url_filter(self, urls):
         if urls is None or len(urls) == 0:
             return []
-        #if len(self.site_filters):
-        #    urls[:] = [ url for url in urls if not self._filter(self.site_filters,url)]
         if len(self.url_filters):
             urls[:] = [
                 url for url in urls if not self._filter(self.url_filters, url)
