@@ -21,6 +21,8 @@ class ZRequest(Fileds):
             })
         self["coding"] = kw.get("fetch_coding", None)
         self["dir_path"] = dir_path + 1
+        self["retry_count"] = kw.get("retry_count", 3)
+        self["last_crawl"] = None
 
     def dumps(self):
         return json.dumps(self)

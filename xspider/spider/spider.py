@@ -77,8 +77,8 @@ class BaseSpider(object):
                     request["url"], json.dumps(items)))
                 if items:
                     self.pipeline(items)
-            for request in requests:
-                self.url_pool.push(request)
+                for request in requests:
+                    self.url_pool.push(request)
         self.crawl_stop()
 
     def _make_request(self, link, request, *argv, **kw):
