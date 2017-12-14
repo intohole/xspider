@@ -55,5 +55,5 @@ if __name__ == "__main__":
         page_processor=KaiJiang(),
         pipeline=[FilePipeLine.DumpFilePipe()],
         allow_site=["kaijiang.5.com"],
-        start_urls=["http://hz.5i5j.com/ershoufang/n1/"])
+        start_urls=["https://hz.5i5j.com/ershoufang/n1"])
     spider.start()

@@ -50,12 +50,17 @@ class ZRequest(Fileds):
 class ZResponse(Fileds):
     def __init__(self, url, pre_url, *argv, **kw):
         super(ZResponse, self).__init__(*argv, **kw)
+        self["redirect_url"] = kw.get("redirect_url", url)
         self["url"] = url
         self["request"] = kw.get("request", ZRequest(url, pre_url, -1))
         self["status_code"] = kw.get("status_code", -1)
-        self["text"] = kw.get("text", "None")
+        self["text"] = kw.get("text", None)
+        self["raw_text"] = kw.get("raw_text", None)
         self["headers"] = kw.get("header", {})
         self["crawl_time"] = kw.get("crawl_time", time.time())
+        self["error"] = kw.get("error", None)
+        self["cost_time"] = kw.get("cost_time", None)
+        self["status_code"] = kw.get("status_code", 599)
 
 
 class Task(Fileds):

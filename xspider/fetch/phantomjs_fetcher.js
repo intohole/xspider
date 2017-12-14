@@ -172,14 +172,14 @@ if (system.args.length !== 2) {
       }
 
       return {
-        orig_url: fetch.url,
+        ori_url: fetch.url,
         status_code: first_response.status || 599,
         error: first_response.errorString,
         content:  page.content,
         headers: headers,
         url: page.url,
         cookies: cookies,
-        time: (Date.now() - start_time) / 1000,
+        cost_time: (Date.now() - start_time) / 1000,
         js_script_result: script_result,
         save: fetch.save
       }

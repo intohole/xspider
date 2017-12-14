@@ -3,8 +3,7 @@ import copy
 import json
 import time
 
-from ..model.models import ZResponse
-
+from xspider.model.models import ZResponse
 import tornado.httpclient
 from tornado.curl_httpclient import CurlAsyncHTTPClient
 import tornado.ioloop
@@ -58,7 +57,7 @@ class Fetcher(object):
         fetch['load_images'] = kwargs.get('load_images', False)
         return fetch
 
-    def request(self, urls, method='get', *argv, **kw):
+    def request(self, url, method='get', *argv, **kw):
         start_time = time.time()
         fetch = self.parse_option(
             self.default_options, url, user_agent=self.user_agent, **kw)
@@ -83,7 +82,7 @@ class Fetcher(object):
             else:
                 logging.error('[%d] %s, %r %.2fs', result['status_code'], url,
                               result['content'], result['time'])
-            return result
+            return ZResponse()
 
         def handle_error(error):
             result = {
@@ -119,4 +118,4 @@ class Fetcher(object):
 
 if __name__ == '__main__':
     fetcher = Fetcher()
-    res = fetcher.phantomjs_fetch('http://www.baidu.com')
+    print fetcher.request('https://hz.5i5j.com/ershoufang/n2/')
