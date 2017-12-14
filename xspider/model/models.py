@@ -2,31 +2,36 @@
 from fileds import Fileds
 import time
 import json
-from ..libs import page_util
+from xspider.libs import page_util
 
 
-class ZRequest(Fileds):
+class ZRequest(object):
     """抓取请求
     """
+    __attr__ = [
+        "url", "pre_url", "method", "params", "headers", "dir_path",
+        "retry_count", "last_crawl"
+    ]
 
     def __init__(self, url, pre_url, dir_path, *argv, **kw):
-        super(ZRequest, self).__init__(*argv, **kw)
-        self["url"] = url
-        self["pre_url"] = pre_url
-        self["method"] = kw.get("method", "GET").lower()
-        self["params"] = kw.get("params", {})
-        self["headers"] = kw.get(
+        super(ZRequest, self).__init__()
+        self.url = url
+        self.pre_url = pre_url
+        self.method = kw.get("method", "GET").lower()
+        self.params = kw.get("params", {})
+        self.headers = kw.get(
             "headers", {
                 'User-Agent':
                 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:23.0) Gecko/20100101 Firefox/23.0'
             })
-        self["coding"] = kw.get("fetch_coding", None)
-        self["dir_path"] = dir_path + 1
-        self["retry_count"] = kw.get("retry_count", 3)
-        self["last_crawl"] = None
+        self.dir_path = dir_path + 1
+        self.retry_count = kw.get("retry_count", 3)
+        self.last_crawl = None
 
     def dumps(self):
-        return json.dumps(self)
+        return json.dumps(
+            {attr: getattr(self, attr)
+             for attr in self.__attr__})
 
     @staticmethod
     def loads(value):
@@ -34,23 +39,33 @@ class ZRequest(Fileds):
             param:value:basestring:反序列化字符串
             return:ZRequest:ZRequest:返回反序列化对象
             Test:
-                >>> request = ZRequest("www.baidu.com",0)
+                >>> request = ZRequest("www.baidu.com","pre",0)
                 >>> j = request.dumps()
                 >>> r = ZRequest.loads(j)
-                >>> print r
                 {"url": "www.baidu.com", "headers": {"User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:23.0) Gecko/20100101 Firefox/23.0"}, "params": {}, "method": "get", "dir_path": 2}
         """
         d = json.loads(value)
         url = d["url"]
         dir_path = d["dir_path"]
+        pre_url = d["pre_url"]
         del d["url"]
         del d["dir_path"]
-        return ZRequest(url, dir_path, **d)
+        del d["pre_url"]
+        return ZRequest(url, pre_url, dir_path, **d)
 
 
-class ZResponse(Fileds):
+class ZResponse(object):
+    """网页抓取返回结果
+
+        Test:
+            >>> response = ZResponse("x","j",raw_text = "abc")
+            >>> response.encoding = "utf-8"
+            >>> response.text
+            'abc'
+    """
+
     def __init__(self, url, pre_url, *argv, **kw):
-        super(ZResponse, self).__init__(*argv, **kw)
+        super(ZResponse, self).__init__()
         self.redirect_url = kw.get("redirect_url", url)
         self.url = url
         self.request = kw.get("request", ZRequest(url, pre_url, -1))
@@ -66,21 +81,21 @@ class ZResponse(Fileds):
 
     @property
     def charset(self):
-        if self._charset is None:
-            self._charset = page_util.get_html_charset(self.raw_text)
+        if self._charset is None and self.raw_text is not None:
+            self._charset = page_util.get_html_charset(bytes(self.raw_text))
         return self._charset
 
     @property
     def text(self):
-        content = None
         encoding = self.encoding
+        if encoding is None:
+            return self.raw_text
         if self.raw_text is None:
             return None
-        if self.charset is None:
-            raise ValueError("html charset is null")
         if self._text is None:
-            try:
-                self._text = str(self.raw_text, self.charset, errors='replace')
-            except (LookupError, TypeError):
-                self._text = str(self.content, errors='replace')
+            if self.encoding != self.charset:
+                self._text = self.raw_text.decode(self.charset).encode(
+                    self.encoding)
+            else:
+                self._text = self.raw_text
         return self._text

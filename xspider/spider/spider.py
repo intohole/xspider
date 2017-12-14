@@ -58,7 +58,6 @@ class BaseSpider(object):
 
     def start(self, *argv, **kw):
         self.crawl_start()
-        kw["fetch_coding"] = self.fetch_coding
         self._make_start_request(*argv, **kw)
         self.logger.info("spider {} get start request".format(self.name))
         while self.url_pool.empty() is False and self.run_flag:
@@ -66,17 +65,19 @@ class BaseSpider(object):
             self.logger.info("get {req} ".format(req=request))
             links = set()
             for response in self.fetcher.fetch(request):
-                page = Page(request, response, request["dir_path"])
+                if self.fetch_coding:
+                    response.encoding = self.fetch_coding
+                page = Page(request, response, request.dir_path)
                 requests = [
                     self._make_request(link, request)
                     for link in self.extract_links(page) if link not in links
                 ]
-                links.update(request["url"] for request in requests)
+                links.update(request.url for request in requests)
                 requests = self.url_filter(requests)
                 self.logger.debug("extract link {}".format(links))
                 items = self.page_processor.excute(page, self)
                 self.logger.debug("process items {} items {}".format(
-                    request["url"], json.dumps(items)))
+                    request.url, json.dumps(items)))
                 if items:
                     self.pipeline(items)
                 for request in requests:
@@ -84,8 +85,7 @@ class BaseSpider(object):
         self.crawl_stop()
 
     def _make_request(self, link, request, *argv, **kw):
-        return ZRequest(link, request["pre_url"], request["dir_path"], *argv,
-                        **kw)
+        return ZRequest(link, request.pre_url, request.dir_path, *argv, **kw)
 
     def _make_start_request(self, *argv, **kw):
         for url in self.start_urls:
@@ -93,7 +93,7 @@ class BaseSpider(object):
             self.url_pool.push(ZRequest(url, None, 0, *argv, **kw))
 
     def extract_links(self, page):
-        parrent_link = page.request["url"]
+        parrent_link = page.request.url
         parrent_site = links.get_url_site(parrent_link)
         parrent_protocol = links.get_url_protocol(parrent_link)
         self.logger.debug(

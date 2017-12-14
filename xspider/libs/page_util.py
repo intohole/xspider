@@ -12,4 +12,4 @@ def get_html_charset(html):
     if html is None:
         return None
     exceptions2.judge_type(html, basestring)
-    return chardet.detect(self.content)['encoding']
+    return chardet.detect(html)['encoding']

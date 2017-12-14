@@ -15,8 +15,8 @@ class Page(object):
     """
 
     def __init__(self, request, response, dir_path):
-        self.url = request["url"]  # 抓取链接
-        self.pre_url = request["pre_url"]
+        self.url = request.url  # 抓取链接
+        self.pre_url = request.url
         self.site = links.get_url_site(self.url)
         self.request = request  # 抓取请求体
         self.text = response.text  # 抓取返回体页面
@@ -28,7 +28,7 @@ class Page(object):
 
     def get_soup(self):
         if self.soup is None:
-            self.soup = BeautifulSoup(self.text)
+            self.soup = BeautifulSoup(self.text, "lxml")
         return self.soup
 
     def get_json(self):

@@ -48,23 +48,19 @@ class BaseRequestsFetcher(_BaseFetcher):
                     self.logger.error("download %s fail , status_code: %s" %
                                       (request["url"], response.status_code))
         else:
-            method = getattr(requests, request["method"])
+            method = getattr(requests, request.method)
             response = method(
-                request["url"],
-                params=request["params"],
-                headers=request["headers"])
+                request.url, params=request.params, headers=request.headers)
             if response and response.status_code == requests.codes.ok:
-                if request["coding"]:
-                    response.encoding = request["coding"]
                 yield ZResponse(
                     response.url,
-                    request["pre_url"],
+                    request.pre_url,
                     status_code=response.status_code,
-                    text=response.text)
+                    raw_text=response.text)
             else:
                 self.logger.error(
                     "download {url} fail , preurl : {preurl} , status_code: {status_code}".
                     format(
-                        url=request["url"],
-                        preurl=request["pre_url"],
+                        url=request.url,
+                        preurl=request.pre_url,
                         status_code=response.status_code))
