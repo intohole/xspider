@@ -60,7 +60,6 @@ class ZResponse(Fileds):
         self["crawl_time"] = kw.get("crawl_time", time.time())
         self["error"] = kw.get("error", None)
         self["cost_time"] = kw.get("cost_time", None)
-        self["status_code"] = kw.get("status_code", 599)
 
 
 class Task(Fileds):
