@@ -17,6 +17,7 @@ from spiderlistener import DefaultSpiderListener
 from spiderlistener import SpiderListener
 from b2 import exceptions2
 import json
+from ..processor.PageProcessor import PageProcessor
 
 
 class BaseSpider(object):
@@ -31,6 +32,7 @@ class BaseSpider(object):
         exceptions2.judge_null(self.start_urls)
         self.page_processor = kw.get("page_processor")
         exceptions2.judge_null(self.page_processor)
+        exceptions2.judge_type(self.page_processor, PageProcessor)
         self.fetcher = kw.get("fetcher", BaseRequestsFetcher())
         self.pipelines = kw.get("pipeline", [ConsolePipeLine()])
         self.run_flag = True
@@ -99,7 +101,7 @@ class BaseSpider(object):
                 parrent_link, parrent_site, parrent_protocol))
         return [
             links.join_url(parrent_protocol, parrent_site, url["href"])
-            for url in self.link_extractors.select(page)
+            for url in self.link_extractors.find(page)
             if not str2.isBlank(url["href"])
         ]
 
