@@ -2,6 +2,7 @@
 from fileds import Fileds
 import time
 import json
+from ..libs import page_util
 
 
 class ZRequest(Fileds):
@@ -50,24 +51,36 @@ class ZRequest(Fileds):
 class ZResponse(Fileds):
     def __init__(self, url, pre_url, *argv, **kw):
         super(ZResponse, self).__init__(*argv, **kw)
-        self["redirect_url"] = kw.get("redirect_url", url)
-        self["url"] = url
-        self["request"] = kw.get("request", ZRequest(url, pre_url, -1))
-        self["status_code"] = kw.get("status_code", -1)
-        self["text"] = kw.get("text", None)
-        self["raw_text"] = kw.get("raw_text", None)
-        self["headers"] = kw.get("header", {})
-        self["crawl_time"] = kw.get("crawl_time", time.time())
-        self["error"] = kw.get("error", None)
-        self["cost_time"] = kw.get("cost_time", None)
+        self.redirect_url = kw.get("redirect_url", url)
+        self.url = url
+        self.request = kw.get("request", ZRequest(url, pre_url, -1))
+        self.status_code = kw.get("status_code", -1)
+        self.raw_text = kw.get("raw_text", None)
+        self.headers = kw.get("header", {})
+        self.crawl_time = kw.get("crawl_time", time.time())
+        self.error = kw.get("error", None)
+        self.cost_time = kw.get("cost_time", None)
+        self._charset = None
+        self._text = None
+        self.encoding = kw.get("encoding", None)
 
+    @property
+    def charset(self):
+        if self._charset is None:
+            self._charset = page_util.get_html_charset(self.raw_text)
+        return self._charset
 
-class Task(Fileds):
-    def __init__(self, url, *argv, **kw):
-        super(Task, self).__init__(*argv, **kw)
-        self["url"] = url
-        self["headers"] = kw.get("headers", {})
-        self["text"] = kw.get("text", "None")
-        self["crawled_time"] = kw.get("crawl_time", time.time())
-        self["link_time"] = kw.get("link_time")
-        self["cookies"] = kw.get("cookies", {})
+    @property
+    def text(self):
+        content = None
+        encoding = self.encoding
+        if self.raw_text is None:
+            return None
+        if self.charset is None:
+            raise ValueError("html charset is null")
+        if self._text is None:
+            try:
+                self._text = str(self.raw_text, self.charset, errors='replace')
+            except (LookupError, TypeError):
+                self._text = str(self.content, errors='replace')
+        return self._text

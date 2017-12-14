@@ -19,7 +19,7 @@ class Page(object):
         self.pre_url = request["pre_url"]
         self.site = links.get_url_site(self.url)
         self.request = request  # 抓取请求体
-        self.raw_text = response["text"]  # 抓取返回体页面
+        self.text = response.text  # 抓取返回体页面
         self.json = None  # json
         self.soup = None  # css selector
         self.etree = None  # xpath
@@ -28,15 +28,15 @@ class Page(object):
 
     def get_soup(self):
         if self.soup is None:
-            self.soup = BeautifulSoup(self.raw_text)
+            self.soup = BeautifulSoup(self.text)
         return self.soup
 
     def get_json(self):
         if self.json is None:
-            self.json = json.loads(self.raw_text)
+            self.json = json.loads(self.text)
         return self.json
 
     def get_tree(self):
         if self.etree is None:
-            self.etree = etree.HTML(self.raw_text)
+            self.etree = etree.HTML(self.text)
         return self.etree
