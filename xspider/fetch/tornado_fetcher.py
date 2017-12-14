@@ -32,11 +32,9 @@ class Fetcher(object):
 
     def __init__(self,
                  phantomjs_proxy='http://localhost:25555',
-                 user_agent='',
                  pool_size=100,
                  async=False):
         self.phantomjs_proxy = phantomjs_proxy
-        self.user_agent = user_agent
         self.async = async
         if self.async:
             self.http_client = CurlAsyncHTTPClient(
@@ -57,10 +55,13 @@ class Fetcher(object):
         fetch['load_images'] = kwargs.get('load_images', False)
         return fetch
 
-    def request(self, url, method='get', *argv, **kw):
+    def request(self, req, method='get', *argv, **kw):
         start_time = time.time()
         fetch = self.parse_option(
-            self.default_options, url, user_agent=self.user_agent, **kw)
+            self.default_options,
+            req.url,
+            user_agent=req.headers["User-Agent"],
+            **kw)
         request_conf = {'follow_redirects': False}
         if 'timeout' in fetch:
             request_conf['connect_timeout'] = fetch['timeout']
@@ -78,23 +79,30 @@ class Fetcher(object):
 
             if result.get('status_code', 200):
                 logging.info('[%d] %s %.2fs', result['status_code'], url,
-                             result['time'])
+                             result['crawl_time'])
             else:
                 logging.error('[%d] %s, %r %.2fs', result['status_code'], url,
-                              result['content'], result['time'])
-            return ZResponse()
+                              result['content'], result['crawl_time'])
+            return ZResponse(
+                url,
+                req.pre_url,
+                redirect_url=request["url"],
+                status_code=result["status_code"],
+                raw_text=result["content"],
+                cost_time=result["cost_time"],
+                error=error)
 
         def handle_error(error):
-            result = {
-                'status_code': getattr(error, 'code', 599),
-                'error': unicode_obj(error),
-                'content': '',
-                'time': time.time() - start_time,
-                'orig_url': url,
-                'url': url,
-            }
-            logging.error('[%d] %s, %r %.2fs', result['status_code'], url,
-                          error, result['time'])
+            result = ZResponse(
+                req.url,
+                req.pre_url,
+                status_code=getattr(error, 'code', 599),
+                error=unicode_obj(error),
+                raw_text=None,
+                cost_time=time.time() - start_time,
+                crawl_time=start_time)
+            logging.error('[%d] %s, %r %.2fs', result.status_code, req.url,
+                          error, result.crawl_time)
             return result
 
         try:
@@ -118,4 +126,6 @@ class Fetcher(object):
 
 if __name__ == '__main__':
     fetcher = Fetcher()
-    print fetcher.request('https://hz.5i5j.com/ershoufang/n2/')
+    from xspider.model.models import ZRequest
+    request = ZRequest("http://www.baidu.com", "x", 3)
+    print fetcher.request(request)

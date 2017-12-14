@@ -63,6 +63,7 @@ class ZResponse(object):
             >>> response.text
             'abc'
     """
+    __attr__ = ["redirect_url", "url", "status_code"]
 
     def __init__(self, url, pre_url, *argv, **kw):
         super(ZResponse, self).__init__()
@@ -74,10 +75,15 @@ class ZResponse(object):
         self.headers = kw.get("header", {})
         self.crawl_time = kw.get("crawl_time", time.time())
         self.error = kw.get("error", None)
-        self.cost_time = kw.get("cost_time", None)
+        self.cost = kw.get("cost_time", None)
         self._charset = None
         self._text = None
         self.encoding = kw.get("encoding", None)
+
+    def __str__(self):
+        return json.dumps(
+            {attr: getattr(self, attr)
+             for attr in self.__attr__})
 
     @property
     def charset(self):

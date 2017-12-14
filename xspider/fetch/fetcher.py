@@ -4,6 +4,7 @@ import requests
 from b2.log2 import get_stream_logger
 from ..model.models import ZResponse
 from ..handler.SpiderHandler import LogHandler
+import time
 
 
 class _BaseFetcher(object):
@@ -35,19 +36,21 @@ class BaseRequestsFetcher(_BaseFetcher):
             for _request in request:
                 method = getattr(requests, _request["method"])
                 response = method(
-                    _request["url"],
+                    _request.url,
                     params=_request["params"],
                     headers=_request["headers"])
                 if response and response.status_code == requests.codes.ok:
                     yield ZResponse(
                         response.url,
-                        _request["pre_url"],
+                        _request.pre_url,
                         status_code=response.status_code,
-                        text=response.text)
+                        crawl_time=crawl_time,
+                        raw_text=response.text)
                 else:
                     self.logger.error("download %s fail , status_code: %s" %
                                       (request["url"], response.status_code))
         else:
+            crawl_time = time.time()
             method = getattr(requests, request.method)
             response = method(
                 request.url, params=request.params, headers=request.headers)
@@ -56,6 +59,7 @@ class BaseRequestsFetcher(_BaseFetcher):
                     response.url,
                     request.pre_url,
                     status_code=response.status_code,
+                    crawl_time=crawl_time,
                     raw_text=response.text)
             else:
                 self.logger.error(

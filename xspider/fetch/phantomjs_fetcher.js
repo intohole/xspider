@@ -1,7 +1,4 @@
 // vim: set et sw=2 ts=2 sts=2 ff=unix fenc=utf8:
-// Author: Binux<i@binux.me>
-//         http://binux.me
-// Created on 2014-10-29 22:12:14
 
 var port, server, service,
   wait_before_end = 1000,
