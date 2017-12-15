@@ -127,5 +127,5 @@ class Fetcher(object):
 if __name__ == '__main__':
     fetcher = Fetcher()
     from xspider.model.models import ZRequest
-    request = ZRequest("http://www.baidu.com", "x", 3)
+    request = ZRequest("http://buyiker.com", "x", 3)
     print fetcher.request(request)

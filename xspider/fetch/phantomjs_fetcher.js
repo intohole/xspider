@@ -125,7 +125,7 @@ if (system.args.length !== 2) {
         result = _make_result(page);
       } catch (e) {
         result = {
-          ori_url: fetch.url,
+          orig_url: fetch.url,
           status_code : 599,
           error: e.toString(),
           content:  '',
@@ -138,7 +138,7 @@ if (system.args.length !== 2) {
 
       }
 
-      console.log("["+result.status_code+"] "+result.orig_url+" "+result.time)
+      console.log("["+result.status_code+"] "+result.orig_url+" "+result.cost_time)
 
       var body = unescape(encodeURIComponent(JSON.stringify(result, null, 2)));
       response.statusCode = 200;
@@ -170,7 +170,7 @@ if (system.args.length !== 2) {
       }
 
       return {
-        ori_url: fetch.url,
+        orig_url: fetch.url,
         status_code: first_response.status || 599,
         error: first_response.errorString || None,
         content:  page.content,
