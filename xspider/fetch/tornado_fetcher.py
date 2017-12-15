@@ -3,7 +3,8 @@ import copy
 import json
 import time
 
-from xspider.model.models import ZResponse
+from ..model.models import ZResponse
+import fetcher
 import tornado.httpclient
 from tornado.curl_httpclient import CurlAsyncHTTPClient
 import tornado.ioloop
@@ -21,7 +22,7 @@ def unicode_obj(obj, encoding='utf-8'):
     return obj
 
 
-class Fetcher(object):
+class Fetcher(fetcher._BaseFetcher):
     default_options = {
         'method': 'GET',
         'headers': {},
@@ -55,7 +56,7 @@ class Fetcher(object):
         fetch['load_images'] = kwargs.get('load_images', False)
         return fetch
 
-    def request(self, req, method='get', *argv, **kw):
+    def fetch(self, req, method='get', *argv, **kw):
         start_time = time.time()
         fetch = self.parse_option(
             self.default_options,
@@ -79,17 +80,17 @@ class Fetcher(object):
 
             if result.get('status_code', 200):
                 logging.info('[%d] %s %.2fs', result['status_code'], req.url,
-                             result['cost_time'])
+                             result['time'])
             else:
                 logging.error('[%d] %s, %r %.2fs', result['status_code'],
-                              req.url, result['content'], result['cost_time'])
+                              req.url, result['content'], result['time'])
             return ZResponse(
                 req.url,
                 req.pre_url,
                 redirect_url=result["url"],
                 status_code=result["status_code"],
                 raw_text=result["content"],
-                cost_time=result["cost_time"],
+                cost_time=result["time"],
                 error=result["error"])
 
         def handle_error(error):
@@ -114,14 +115,14 @@ class Fetcher(object):
             if self.async:
                 self.http_client.fetch(request, handle_response)
             else:
-                return handle_response(self.http_client.fetch(request))
+                yield handle_response(self.http_client.fetch(request))
         except tornado.httpclient.HTTPError as e:
             if e.response:
-                return handle_response(e.response)
+                yield handle_response(e.response)
             else:
-                return handle_error(e)
+                yield handle_error(e)
         except Exception as e:
-            return handle_error(e)
+            yield handle_error(e)
 
 
 if __name__ == '__main__':

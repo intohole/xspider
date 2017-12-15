@@ -1,5 +1,7 @@
 // vim: set et sw=2 ts=2 sts=2 ff=unix fenc=utf8:
 
+
+
 var port, server, service,
   wait_before_end = 1000,
   system = require('system'),
@@ -126,19 +128,18 @@ if (system.args.length !== 2) {
       } catch (e) {
         result = {
           orig_url: fetch.url,
-          status_code : 599,
+          status_code: 599,
           error: e.toString(),
           content:  '',
           headers: {},
           url: page.url,
           cookies: {},
-          cost_time: (Date.now() - start_time) / 1000,
+          time: (Date.now() - start_time) / 1000,
           save: fetch.save
         }
-
       }
 
-      console.log("["+result.status_code+"] "+result.orig_url+" "+result.cost_time)
+      console.log("["+result.status_code+"] "+result.orig_url+" "+result.time)
 
       var body = unescape(encodeURIComponent(JSON.stringify(result, null, 2)));
       response.statusCode = 200;
@@ -172,12 +173,12 @@ if (system.args.length !== 2) {
       return {
         orig_url: fetch.url,
         status_code: first_response.status || 599,
-        error: first_response.errorString || None,
+        error: first_response.errorString || '',
         content:  page.content,
         headers: headers,
         url: page.url,
         cookies: cookies,
-        cost_time: (Date.now() - start_time) / 1000,
+        time: (Date.now() - start_time) / 1000,
         js_script_result: script_result,
         save: fetch.save
       }

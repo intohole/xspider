@@ -7,14 +7,15 @@ from xspider.selector import XPathSelector
 from xspider.filters.CrawledFilter import SimpleCrawledFilter
 from xspider.pipeline import FilePipeLine
 from xspider import model
+from xspider.fetch import tornado_fetcher
 from b2 import system2
 system2.reload_utf8()
 from lxml import etree
 
 
-class KaiJiang(PageProcessor.PageProcessor):
+class WoAiWoJia2Fang(PageProcessor.PageProcessor):
     def __init__(self):
-        super(KaiJiang, self).__init__()
+        super(WoAiWoJia2Fang, self).__init__()
         self.fang_info = XPathSelector.XpathSelector(
             path="//ul[@class='pList']/li/div[@class='listCon']")
 
@@ -50,10 +51,11 @@ if __name__ == "__main__":
     url_filters = [start_url_filter]
     spider = BaseSpider(
         name="woaiwojia.hz",
+        fetcher=tornado_fetcher.Fetcher(),
         url_filters=url_filters,
         crawled_filter=SimpleCrawledFilter(),
-        page_processor=KaiJiang(),
+        page_processor=WoAiWoJia2Fang(),
         pipeline=[FilePipeLine.DumpFilePipe()],
-        allow_site=["kaijiang.5.com"],
-        start_urls=["https://hz.5i5j.com/ershoufang/n1"])
+        allow_site=["hz.5i5j.com"],
+        start_urls=["https://hz.5i5j.com/ershoufang/n2/"])
     spider.start()

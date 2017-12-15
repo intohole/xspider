@@ -16,7 +16,7 @@ class _BaseFetcher(object):
         self.logger = get_stream_logger(log_level, log_name="fetcher")
         self.handler = handler
 
-    def request(self, urls, method='get', *argv, **kw):
+    def fetch(self, urls, method='get', *argv, **kw):
         raise NotImplementedError
 
 
@@ -28,7 +28,7 @@ class BaseRequestsFetcher(_BaseFetcher):
     def __init__(self):
         super(BaseRequestsFetcher, self).__init__()
 
-    def fetch(self, request):
+    def fetch(self, request, method='get', *argv, **kw):
         if request is None:
             self.logger.error("download [%s] is fail" % request)
             yield
