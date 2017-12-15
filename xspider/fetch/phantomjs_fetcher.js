@@ -125,16 +125,17 @@ if (system.args.length !== 2) {
         result = _make_result(page);
       } catch (e) {
         result = {
-          orig_url: fetch.url,
-          status_code: 599,
+          ori_url: fetch.url,
+          status_code : 599,
           error: e.toString(),
           content:  '',
           headers: {},
           url: page.url,
           cookies: {},
-          time: (Date.now() - start_time) / 1000,
+          cost_time: (Date.now() - start_time) / 1000,
           save: fetch.save
         }
+
       }
 
       console.log("["+result.status_code+"] "+result.orig_url+" "+result.time)
