@@ -171,7 +171,7 @@ if (system.args.length !== 2) {
       return {
         ori_url: fetch.url,
         status_code: first_response.status || 599,
-        error: first_response.errorString,
+        error: first_response.errorString || None,
         content:  page.content,
         headers: headers,
         url: page.url,

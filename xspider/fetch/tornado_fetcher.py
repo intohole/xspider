@@ -78,19 +78,19 @@ class Fetcher(object):
                 return handle_error(e)
 
             if result.get('status_code', 200):
-                logging.info('[%d] %s %.2fs', result['status_code'], url,
-                             result['crawl_time'])
+                logging.info('[%d] %s %.2fs', result['status_code'], req.url,
+                             result['cost_time'])
             else:
-                logging.error('[%d] %s, %r %.2fs', result['status_code'], url,
-                              result['content'], result['crawl_time'])
+                logging.error('[%d] %s, %r %.2fs', result['status_code'],
+                              req.url, result['content'], result['cost_time'])
             return ZResponse(
-                url,
+                req.url,
                 req.pre_url,
-                redirect_url=request["url"],
+                redirect_url=result["url"],
                 status_code=result["status_code"],
                 raw_text=result["content"],
                 cost_time=result["cost_time"],
-                error=error)
+                error=result["error"])
 
         def handle_error(error):
             result = ZResponse(
