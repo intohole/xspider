@@ -13,6 +13,7 @@ from ..libs import links
 from ..model.page import Page
 from ..filters.UrlFilter import SiteFilter
 from ..selector.CssSelector import CssSelector
+from ..policy.ProxyPolicy import BaseProxyPolicy
 from spiderlistener import DefaultSpiderListener
 from spiderlistener import SpiderListener
 from b2 import exceptions2
@@ -33,7 +34,11 @@ class BaseSpider(object):
         self.page_processor = kw.get("page_processor")
         exceptions2.judge_null(self.page_processor)
         exceptions2.judge_type(self.page_processor, PageProcessor)
+        self.proxy_policy = kw.get("proxy_policy", None)
+        if self.proxy_policy is not None:
+            exceptions2.judge_type(self.proxy_policy, BaseProxyPolicy)
         self.fetcher = kw.get("fetcher", BaseRequestsFetcher())
+        self.fetcher.setProxy(self.proxy_policy)
         self.pipelines = kw.get("pipeline", [ConsolePipeLine()])
         self.run_flag = True
         self.spid = rand2.get_random_seq(10)

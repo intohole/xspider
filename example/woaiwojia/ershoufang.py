@@ -51,11 +51,11 @@ if __name__ == "__main__":
     start_url_filter.set_must_check()
 
     url_filters = [
-        CrawlRateFilter.TimeRateFilter(every=1, wait=0.98), start_url_filter
+        CrawlRateFilter.TimeRateFilter(every=0.5, wait=2), start_url_filter
     ]
     spider = BaseSpider(
         name="woaiwojia.hz",
-        fetcher=tornado_fetcher.Fetcher(),
+        #fetcher=tornado_fetcher.Fetcher(),
         url_filters=url_filters,
         crawled_filter=SimpleCrawledFilter(),
         page_processor=WoAiWoJia2Fang(),

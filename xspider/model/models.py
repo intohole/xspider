@@ -106,3 +106,26 @@ class ZResponse(object):
             else:
                 self._text = self.raw_text
         return self._text
+
+
+class ProxyInfo(object):
+    """代理配置
+    """
+
+    def __init__(self,
+                 proxy=None,
+                 protocal=None,
+                 user=None,
+                 passwd=None,
+                 host=None,
+                 port=None):
+        # proxy like socks5://user:pass@host:port
+        self.proxy = proxy
+        self.parse(proxy)
+        self.protocal = protocal
+        self.user = user
+        self.passwd = passwd
+        self.host = host
+
+    def parse(self, proxy):
+        pass
