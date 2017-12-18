@@ -16,10 +16,12 @@ class BaseFilter(object):
     def __init__(self,
                  filter_name,
                  must_check=False,
-                 priority=priority.FILTER_PRIORITY.NONE):
+                 priority=priority.FILTER_PRIORITY.NONE,
+                 ignore=False):
         self.filter_name = filter_name
         self._must_check = must_check
         self._priority = priority
+        self._ignore = ignore
 
     def filter(self, url):
         """url match relu
@@ -51,6 +53,9 @@ class BaseFilter(object):
 
     def update(self, *argv, **kw):
         pass
+
+    def ignore(self):
+        return self._ignore
 
 
 class SiteFilter(BaseFilter):

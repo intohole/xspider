@@ -2,8 +2,8 @@
 
 import requests
 from b2.log2 import get_stream_logger
-from ..model.models import ZResponse
-from ..handler.SpiderHandler import LogHandler
+from xspider.model.models import ZResponse
+from xspider.handler.SpiderHandler import LogHandler
 import time
 
 

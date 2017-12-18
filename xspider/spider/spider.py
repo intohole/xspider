@@ -52,6 +52,7 @@ class BaseSpider(object):
             kw.get("listeners", [DefaultSpiderListener()]))
         self.link_extractors = CssSelector("a[href]")
         self.crawled_filter = kw.get("crawled_filter", None)
+        self.timeout = kw.get("timeout", 120)
 
     def setStartUrls(self, urls):
         self.start_urls.extend(urls)
@@ -64,10 +65,15 @@ class BaseSpider(object):
             request = self.url_pool.pop()
             self.logger.info("get {req} ".format(req=request))
             links = set()
-            for response in self.fetcher.fetch(request):
+            for response in self.fetcher.fetch(request, timeout=self.timeout):
                 if self.fetch_coding:
                     response.encoding = self.fetch_coding
                 page = Page(request, response, request.dir_path)
+                if page.text is None or len(page.text) == 0:
+                    self.logger.error(
+                        "crawl page {} fail ! status_code {} ".format(
+                            response.url, response.status_code))
+                    continue
                 requests = [
                     self._make_request(link, request)
                     for link in self.extract_links(page) if link not in links
@@ -114,6 +120,9 @@ class BaseSpider(object):
         """
         for url_filter in url_filters:
             _filter = url_filter.filter(url)
+            # when set ignore is ture , ignore this filter
+            if url_filter.ignore():
+                continue
             # if url_filter must be check and url not match filter , so url filtered
             if _filter is True and url_filter.must_check():
                 return True

@@ -3,7 +3,7 @@ import copy
 import json
 import time
 
-from ..model.models import ZResponse
+from xspider.model.models import ZResponse
 import fetcher
 import tornado.httpclient
 from tornado.curl_httpclient import CurlAsyncHTTPClient
@@ -50,6 +50,8 @@ class Fetcher(fetcher._BaseFetcher):
         fetch['url'] = url
         fetch['headers']['User-Agent'] = user_agent
         js_script = kwargs.get('js_script')
+        if "timeout" in kwargs:
+            fetch["timeout"] = kwargs["timeout"]
         if js_script:
             fetch['js_script'] = js_script
             fetch['js_run_at'] = kwargs.get('js_run_at', 'document-end')
@@ -129,4 +131,5 @@ if __name__ == '__main__':
     fetcher = Fetcher()
     from xspider.model.models import ZRequest
     request = ZRequest("http://buyiker.com", "x", 3)
-    print fetcher.request(request)
+    for i in fetcher.fetch(request):
+        print i

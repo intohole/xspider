@@ -7,6 +7,7 @@ from xspider.selector import XPathSelector
 from xspider.filters.CrawledFilter import SimpleCrawledFilter
 from xspider.pipeline import FilePipeLine
 from xspider import model
+from xspider.fetch import tornado_fetcher
 from b2 import system2
 system2.reload_utf8()
 
@@ -58,6 +59,7 @@ if __name__ == "__main__":
     spider = BaseSpider(
         name="kaijiang",
         fetch_coding="utf-8",
+        fetcher=tornado_fetcher.Fetcher(),
         url_filters=url_filters,
         crawled_filter=SimpleCrawledFilter(),
         page_processor=KaiJiang(),

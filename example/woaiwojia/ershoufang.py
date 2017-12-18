@@ -5,6 +5,7 @@ from xspider.filters import UrlFilter
 from xspider.processor import PageProcessor
 from xspider.selector import XPathSelector
 from xspider.filters.CrawledFilter import SimpleCrawledFilter
+from xspider.filters import CrawlRateFilter
 from xspider.pipeline import FilePipeLine
 from xspider import model
 from xspider.fetch import tornado_fetcher
@@ -46,9 +47,12 @@ class WoAiWoJia2Fang(PageProcessor.PageProcessor):
 
 if __name__ == "__main__":
     start_url_filter = UrlFilter.UrlStartFilter(
-        "http://hz.5i5j.com/ershoufang/n")
+        "https://hz.5i5j.com/ershoufang/n")
     start_url_filter.set_must_check()
-    url_filters = [start_url_filter]
+
+    url_filters = [
+        CrawlRateFilter.TimeRateFilter(every=1, wait=0.98), start_url_filter
+    ]
     spider = BaseSpider(
         name="woaiwojia.hz",
         fetcher=tornado_fetcher.Fetcher(),
@@ -56,6 +60,7 @@ if __name__ == "__main__":
         crawled_filter=SimpleCrawledFilter(),
         page_processor=WoAiWoJia2Fang(),
         pipeline=[FilePipeLine.DumpFilePipe()],
+        timeout=400,
         allow_site=["hz.5i5j.com"],
-        start_urls=["https://hz.5i5j.com/ershoufang/n2/"])
+        start_urls=["https://hz.5i5j.com/ershoufang/"])
     spider.start()
