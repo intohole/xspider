@@ -1,5 +1,7 @@
 #coding=utf-8
 
+from ..model.models import ProxyInfo
+
 
 class BaseProxyPolicy(object):
     """proxy policy base, define basic interface;
@@ -32,7 +34,7 @@ class RandomProxyPolicy(BaseProxyPolicy):
         pass
 
     def getProxy(self, spider, request):
-        sample(self._pool.items(), 1)[0]
+        return sample(self._pool.items(), 1)[0]
 
     def updateStatus(self, proxy, cralw_status, *argv, **kw):
         pass

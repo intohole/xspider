@@ -110,22 +110,23 @@ class ZResponse(object):
 
 class ProxyInfo(object):
     """代理配置
+        eg. http://user:pass@10.10.1.10:3128/'
     """
 
     def __init__(self,
-                 proxy=None,
-                 protocal=None,
+                 protocal='http',
                  user=None,
                  passwd=None,
                  host=None,
                  port=None):
-        # proxy like socks5://user:pass@host:port
-        self.proxy = proxy
-        self.parse(proxy)
         self.protocal = protocal
         self.user = user
         self.passwd = passwd
         self.host = host
+        self.port = port
 
-    def parse(self, proxy):
-        pass
+    def __rep__(self):
+        host = "{}:{}".format(self.host, self.port) if self.port else self.host
+        us = "{}:{}@".format(self.user, self.passwd) if self.user else ""
+        return "{protocal}://{user}{host}/".format(
+            protocal=self.protocal, user, host)
