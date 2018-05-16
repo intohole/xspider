@@ -51,7 +51,7 @@ class DefaultSpiderListener(Listener):
                 url_pool = getattr(spider, "url_pool")
                 if url_pool and hasattr(url_pool, "close"):
                     url_pool.close()
-            spider.log.error("spider has colsed")
+            spider.logger.error("spider has colsed")
 
     def spider_start(self, spider):
         pass
