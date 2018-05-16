@@ -129,4 +129,4 @@ class ProxyInfo(object):
         host = "{}:{}".format(self.host, self.port) if self.port else self.host
         us = "{}:{}@".format(self.user, self.passwd) if self.user else ""
         return "{protocal}://{user}{host}/".format(
-            protocal=self.protocal, user, host)
+            protocal=self.protocal, user=user, host=host)
