@@ -7,7 +7,7 @@ import re
 
 __all__ = [
     "PageProcessor", "BasePageMatchUrlProcessor", "PageMatchStartUrlProcessor",
-    "PageMatchEndsUrlProcessor"
+    "PageMatchEndsUrlProcessor", "PageMatchRegUrlProcessor"
 ]
 
 
