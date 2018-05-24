@@ -42,11 +42,11 @@ class BasePageMatchUrlProcessor(PageProcessor):
             exception:TypeError:url_pattern's type not basestring
             return:None
         """
-        super(PageMatchStartUrlProcessor, self).__init__(name)
+        super(BasePageMatchUrlProcessor, self).__init__(name)
         if str2.isBlank(url_pattern):
             raise ValueError("url_pattern must be not empty string")
         if not isinstance(start_url_pattern, basestring):
-            exceptions2.raiseTypeError(start_url_pattern)
+            exceptions2.raiseTypeError(url_pattern)
         self.lower = lower
         self.url_pattern = url_pattern if self.lower is False else url_pattern.lower(
         )
