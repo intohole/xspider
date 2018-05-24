@@ -40,6 +40,11 @@ xspider部分api
             - folder_path 保存文件夹，默认值./data
         - 将解析内容直接保存到文件中，并且内容是json形式
 + 过滤器
+    + 过滤器基础方法
+        - set_must_check()
+            - 设置后，必需强制满足，如果不满足，直接过滤
+        - set_priority()
+            - 设置过滤器的优先级
     + xspider.filters.UrlFilter.SiteFilter
         - 参数
             - sites 站点集合，list／set类型

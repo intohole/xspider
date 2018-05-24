@@ -49,6 +49,8 @@ class BaseSpider(object):
         self.site_filters = [SiteFilter(site) for site in self.allow_site]
         url_filters = kw.get("url_filters", [])
         url_filters.extend(self.site_filters)
+        """sort filter order by init param priority
+        """
         sort2.sort_list_object(url_filters, "_priority")
         self.url_filters = url_filters
         self.listeners = SpiderListener()
