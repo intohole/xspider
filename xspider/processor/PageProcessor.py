@@ -113,4 +113,5 @@ class PageMatchRegUrlProcessor(BasePageMatchUrlProcessor):
             url_pattern, re.I) if lower else re.compile(url_pattern)
 
     def match(self, page):
-        return self._url_reg_pattern.search(page.request["url"])
+        return True if self._url_reg_pattern.search(
+            page.request["url"]) else False
