@@ -101,7 +101,7 @@ class PageMatchRegUrlProcessor(BasePageMatchUrlProcessor):
     def __init__(self, name, url_pattern, lower=True):
         """init function
             param:name:bastring:processor name
-            param:end_url_pattern:basestring:url suffix
+            param:url_pattern:basestring:url reg pattern
             param:lower:blooean:lower url match
             exception:ValueError:start_url_pattern is empty
             exception:TypeError:start_url_pattern's type not basestring
