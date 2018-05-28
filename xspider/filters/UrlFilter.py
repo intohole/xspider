@@ -197,7 +197,7 @@ class UrlDirPathFilter(BaseFilter):
     def filter(self, request):
         if request is None:
             raise ValueError
-        if isinstance(request, dict):
+        if hasattr(request, "dir_path"):
             _dir_path = request.get("dir_path", None)
             if _dir_path is None:
                 raise Exception, "%s is not set dirpath" % request
