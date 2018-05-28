@@ -70,6 +70,11 @@ xspider部分api
             - dir_path_limit 链接保留最大层级
         - 为了避免过深入抓取链接，使用链接层级过滤，注明，使用此过滤器，如果不符合条件，直接链接丢弃，不再处理
 
+    + xspider.filters.UrlFilter.UrlFilterContainer
+        - 参数
+           - filters 过滤器列表
+        - 只有filters所有过滤器都不过滤链接的时候，链接才会保存，相当于所有过滤器做与操作
+
     + xspider.filters.UrlFilter.CrawledFilter.SimpleCrawledFilter
         - 直接使用set类型作为抓取过滤，如果设置此过滤类型，请注意内存，另外会直接过滤已经抓取链接
     + xspider.filters.UrlFilter.CrawledFilters.BloomCrawledFilter
