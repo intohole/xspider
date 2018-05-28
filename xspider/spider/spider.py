@@ -126,10 +126,10 @@ class BaseSpider(object):
         """如果被过滤，则返回True,否则返回False
         """
         for url_filter in url_filters:
-            _filter = url_filter.filter(url)
             # when set ignore is ture , ignore this filter
             if url_filter.ignore():
                 continue
+            _filter = url_filter.filter(url)
             # if url_filter must be check and url not match filter , so url filtered
             if _filter is True and url_filter.must_check():
                 return True

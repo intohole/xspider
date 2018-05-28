@@ -205,3 +205,21 @@ class UrlDirPathFilter(BaseFilter):
                 return True
             return False
         raise TypeError
+
+
+class UrlFilterContainer(BaseFilter):
+    """根据请求request，如果满足所有过滤条件，才能被保留
+    """
+
+    def __init__(self, filters):
+        super(UrlFilterContainer, self).__init__("urlfiltercontainer")
+        if isinstance(filters, BaseFilter):
+            self._filters = [filters]
+        else:
+            self._filters = filters
+
+    def filter(self, request):
+        for _filter in self._filters:
+            if _filter.filter(request):
+                return True
+        return False
