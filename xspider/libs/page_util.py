@@ -4,6 +4,8 @@ from b2 import exceptions2
 import re
 import chardet
 
+_charset_pattern = re.compile('<\s+meta\s+charset\s*=\s*"(.*?)"\s*/>', re.I)
+
 
 def get_html_charset(html):
     """get html charset/encoding

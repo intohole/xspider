@@ -14,3 +14,9 @@ class CssSelector(Selector):
 
     def find(self, page):
         return page.get_soup().select(self.css)
+
+    def get_text(self, page):
+        return self.find(page)[0].text
+
+    def get_all_text(self, page):
+        pass
