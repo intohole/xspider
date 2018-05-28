@@ -198,7 +198,7 @@ class UrlDirPathFilter(BaseFilter):
         if request is None:
             raise ValueError
         if hasattr(request, "dir_path"):
-            _dir_path = request.get("dir_path", None)
+            _dir_path = request.dir_path
             if _dir_path is None:
                 raise Exception, "%s is not set dirpath" % request
             if _dir_path > self.dir_path_limit:
