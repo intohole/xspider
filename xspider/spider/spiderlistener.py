@@ -44,7 +44,7 @@ class DefaultSpiderListener(Listener):
     def spider_stop(self, spider):
         if spider and isinstance(spider, spiderman.BaseSpider):
             if hasattr(spider, "pipelines"):
-                for pipeline in self.pipelines:
+                for pipeline in spider.pipelines:
                     pipeline.destory(spider)
             if hasattr(spider, "url_pool"):
                 url_pool = getattr(spider, "url_pool")
