@@ -215,11 +215,27 @@ class UrlFilterContainer(BaseFilter):
         super(UrlFilterContainer, self).__init__("urlfiltercontainer")
         if isinstance(filters, BaseFilter):
             self._filters = [filters]
-        else:
+        elif isinstance(filters, (list, tuple)):
             self._filters = filters
+        else:
+            raise TypeError
 
     def filter(self, request):
         for _filter in self._filters:
             if _filter.filter(request):
                 return True
         return False
+
+
+class UrlFilterORContainer(UrlFilterContainer):
+    """根据请求request，如果满足任意一个过滤器被保留条件，就会保留
+    """
+
+    def __init__(self, filters):
+        super(UrlFilterORContainer, self).__init__(filters)
+
+    def filter(self, request):
+        for _filter in self._filters:
+            if not _filter.filter(request):
+                return False
+        return True
