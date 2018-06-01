@@ -15,8 +15,28 @@ class CssSelector(Selector):
     def find(self, page):
         return page.get_soup().select(self.css)
 
-    def get_text(self, page):
-        return self.find(page)[0].text
+    def get_text(self, page, index=0):
+        contents = self.find(page)
+        if contents is not None and len(contents) > index:
+            return contents[0].text
+        return None
 
-    def get_all_text(self, page):
-        pass
+    def get_texts(self, page):
+        contents = self.find(page)
+        if contents is not None and len(contents) > 0:
+            return [content.text for content in contents]
+        return []
+
+    def get_html(self, page, index=0):
+        contents = self.find(page)
+        if contents is not None and len(contents) > index:
+            return str(contents[index])
+        return None
+
+    def get_table(self, page, tag):
+        contents = self.find(page)
+        if contents is not None and len(contents) > index:
+            for content in contents:
+                kv = content.select(tag)
+                yield kv[0].text, kv[1].text
+        return []
