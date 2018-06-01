@@ -39,4 +39,4 @@ class CssSelector(Selector):
             for content in contents:
                 kv = content.select(tag)
                 yield kv[0].text, kv[1].text
-        return []
+        yield
