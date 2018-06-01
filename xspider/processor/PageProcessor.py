@@ -19,7 +19,7 @@ class PageProcessor(object):
         self.name = name if name else type(self).__name__
 
     def process(self, page, spider):
-        raise NotImplmentError
+        raise NotImplemented
 
     def match(self, page):
         return True
