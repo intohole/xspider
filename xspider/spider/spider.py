@@ -33,7 +33,6 @@ class BaseSpider(object):
         self.start_urls = kw.get("start_urls", [])
         exceptions2.judge_null(self.start_urls)
         page_processor = kw.get("page_processor")
-        exceptions2.judge_null(self.page_processor)
         if isinstance(page_processor, (list, tuple)):
             self.page_processor = page_processor
         elif isinstance(page_processor, PageProcessor):
@@ -103,7 +102,6 @@ class BaseSpider(object):
                 links.update(request.url for request in requests)
                 requests = self.url_filter(requests)
                 self.logger.debug("extract link {}".format(links))
-                items = self.page_processor.excute(page, self)
                 self.logger.debug("process items {} items {}".format(
                     request.url, json.dumps(items)))
                 for item in items:

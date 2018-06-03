@@ -20,7 +20,7 @@ class BuYiKr(PageProcessor.PageProcessor):
         items = model.fileds.Fileds()
         items["title"] = self.title_extractor.find(page)
         items["url"] = page.url
-        return items
+        yield items
 
 
 if __name__ == "__main__":

@@ -1,9 +1,8 @@
 from setuptools import setup, find_packages
 
-
 kw = dict(
     name='xspider',
-    version='0.0.9',
+    version='0.1.0',
     description='simple spider',
     author='intohole',
     author_email='intoblack86@gmail.com',
@@ -11,7 +10,6 @@ kw = dict(
     download_url='https://github.com/intoblack/mosquito',
     platforms='all platform',
     packages=find_packages(exclude=('tests', 'tests.*')),
-    include_package_data=True
-)
+    include_package_data=True)
 
 setup(**kw)
