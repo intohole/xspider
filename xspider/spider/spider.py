@@ -17,6 +17,7 @@ from ..policy.ProxyPolicy import BaseProxyPolicy
 from spiderlistener import DefaultSpiderListener
 from spiderlistener import SpiderListener
 from b2 import exceptions2
+from ..model.fileds import Fileds
 import json
 from ..processor.PageProcessor import PageProcessor
 
@@ -31,9 +32,14 @@ class BaseSpider(object):
             name, self.allow_site))
         self.start_urls = kw.get("start_urls", [])
         exceptions2.judge_null(self.start_urls)
-        self.page_processor = kw.get("page_processor")
+        page_processor = kw.get("page_processor")
         exceptions2.judge_null(self.page_processor)
-        exceptions2.judge_type(self.page_processor, PageProcessor)
+        if isinstance(page_processor, (list, tuple)):
+            self.page_processor = page_processor
+        elif isinstance(page_processor, PageProcessor):
+            self.page_processor = [page_processor]
+        else:
+            raise TypeError("page_processor is list or PageProcessor")
         self.proxy_policy = kw.get("proxy_policy", None)
         if self.proxy_policy is not None:
             exceptions2.judge_type(self.proxy_policy, BaseProxyPolicy)
@@ -85,13 +91,22 @@ class BaseSpider(object):
                     self._make_request(link, request)
                     for link in self.extract_links(page) if link not in links
                 ]
+                items = []
+                for parser in self.page_processor:
+                    for item in parser.excute(page, self):
+                        if item is None:
+                            continue
+                        if isinstance(item, basestring):
+                            requests.append(self._make_request(item, request))
+                        elif isinstance(item, Fileds):
+                            items.append(item)
                 links.update(request.url for request in requests)
                 requests = self.url_filter(requests)
                 self.logger.debug("extract link {}".format(links))
                 items = self.page_processor.excute(page, self)
                 self.logger.debug("process items {} items {}".format(
                     request.url, json.dumps(items)))
-                if items:
+                for item in items:
                     self.pipeline(items)
                 for request in requests:
                     self.url_pool.push(request)
