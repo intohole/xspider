@@ -86,7 +86,7 @@ class PageMatchEndsUrlProcessor(BasePageMatchUrlProcessor):
             exception:TypeError:start_url_pattern's type not basestring
             return:None
         """
-        super(PageMatchStartUrlProcessor, self).__init__(
+        super(PageMatchEndsUrlProcessor, self).__init__(
             name, end_url_pattern, lower)
 
     def match(self, page):
