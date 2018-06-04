@@ -27,6 +27,7 @@ class PageProcessor(object):
     def excute(self, page, spider):
         if self.match(page):
             return self.process(page, spider)
+        return []
 
 
 class BasePageMatchUrlProcessor(PageProcessor):
@@ -69,8 +70,8 @@ class PageMatchStartUrlProcessor(BasePageMatchUrlProcessor):
             name, start_url_pattern, lower)
 
     def match(self, page):
-        url = page.request["url"].lower() if self.lower else page["url"]
-        return True if self.url_pattern.startswith(url) else False
+        url = page.url.lower() if self.lower else page.url
+        return True if url.startswith(self.url_pattern) else False
 
 
 class PageMatchEndsUrlProcessor(BasePageMatchUrlProcessor):
@@ -90,8 +91,8 @@ class PageMatchEndsUrlProcessor(BasePageMatchUrlProcessor):
             name, end_url_pattern, lower)
 
     def match(self, page):
-        url = page.request["url"].lower() if self.lower else page["url"]
-        return True if self.url_pattern.endswith(url) else False
+        url = page.url.lower() if self.lower else page.url
+        return True if url.endswith(self.url_pattern) else False
 
 
 class PageMatchRegUrlProcessor(BasePageMatchUrlProcessor):
