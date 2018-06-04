@@ -105,7 +105,7 @@ class BaseSpider(object):
                 self.logger.debug("process items {} items {}".format(
                     request.url, json.dumps(items)))
                 for item in items:
-                    self.pipeline(items)
+                    self.pipeline(item)
                 for request in requests:
                     self.url_pool.push(request)
         self.crawl_stop()
