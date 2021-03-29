@@ -54,7 +54,7 @@ protobuf==3.4.0
 ptyprocess==0.5.2
 pybloomfiltermmap==0.3.12
 pycurl==7.43.0
-Pygments==2.2.0
+Pygments==2.7.4
 python-apt==1.1.0b1
 python-dateutil==2.6.1
 PyYAML==3.12
