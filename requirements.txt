@@ -22,7 +22,7 @@ functools32==3.2.3.post2
 html5lib==0.9999999
 idna==2.5
 ipykernel==4.6.1
-ipython==5.4.1
+ipython==7.16.3
 ipython-genutils==0.2.0
 ipywidgets==7.0.0
 Jinja2==2.9.6
