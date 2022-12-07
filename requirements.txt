@@ -7,7 +7,7 @@ beautifulsoup4==4.6.0
 bitarray==0.8.1
 bleach==1.5.0
 bs4==0.0.1
-certifi==2017.4.17
+certifi==2022.12.7
 chardet==3.0.3
 Cheetah==2.4.4
 cloud-init==0.7.6
